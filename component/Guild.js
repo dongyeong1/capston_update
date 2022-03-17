@@ -50,11 +50,11 @@ function Guild() {
   return (
 
     <div>
-    <div style={{position:'fixed',marginTop:425,marginLeft:55}}>현재운동중</div>
+    {/* <div style={{position:'fixed',marginTop:425,marginLeft:55}}>현재운동중</div> */}
     <Card 
    
    
-style={ { width: 250 ,height:'40vh',marginLeft:50 ,marginTop:460,borderRadius:30,position:'fixed',borderBottomWidth:1,overflow:'auto'}}
+style={ { width: 750 ,height:'15vh',marginLeft:50 ,borderRadius:30,position:'fixed',borderBottomWidth:1,overflow:'auto'}}
 bordered={false}
 >
 

@@ -204,14 +204,12 @@ const mouseOver=()=>{
      
 
     <Row>
-        <Col span={4}>
-            <SideBar></SideBar>
-        </Col>
+      
         <Col span={20}>
 
         <Row>
         <Col span={10}>
-        <div style={{fontSize:33,marginLeft:50,marginTop:50}}>{loadMap.track.description}</div> 
+        <div style={{fontSize:33,marginLeft:50,marginTop:50}}>{loadMap.track.trackName}</div> 
         
       
 
@@ -291,8 +289,7 @@ const mouseOver=()=>{
 <span style={{position:'absolute',bottom:12,left:370}}>날짜</span>
             </Card>
           
-        {
-            loadMap.rank.map((b,index)=>(
+        {loadMap.rank==='gpsData가 존재하지 않습니다.'?'':loadMap.rank.map((b,index)=>(
                 <Card style={{marginBottom:10,borderRadius:30}}>
                                      <a>{index+1+'위'}</a>
 
@@ -304,6 +301,7 @@ const mouseOver=()=>{
                 </Card>
                 
             ))
+            
             }
         </div>
        

@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react'
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import { Polyline ,Marker,StreetViewPanorama,MarkerClusterer} from '@react-google-maps/api';
-import {Card,Table,Button,Slider, Switch,Row,Col} from 'antd'
+import {Card,Table,Button,Slider, Switch,Row,Col,Input} from 'antd'
 import { fa } from 'faker/lib/locales';
 // import CreatedPath from './createdPath';
 import SideBar from '../../component/Layout/SideBar';
@@ -12,10 +12,14 @@ import wrapper from '../../store/configureStore';
 import { ADD_TRACK_REQUEST, LOAD_CREATEMAP_REQUEST } from '../../reducers/map';
 import axios from 'axios';
 import create from '@ant-design/icons/lib/components/IconFont';
+import useInput from '../../hooks/useInput';
+
 
 
 
 function createPath() {
+
+    const [trackName,onChangeTrackName]=useInput('');
 
     const {createMap}=useSelector((state)=>state.map)
 
@@ -136,13 +140,15 @@ const mouseOver=()=>{
         console.log('polyline: ', polyline)
       };
 
-      const [number,setNumber]=useState([0,createMap.track.gps.coordinates.length-1])
+      const [number,setNumber]=useState([0,createMap.gps.coordinates.length-1])
+
+      const [distacnce,setDistance]=useState()
       
       const [leftPath,setLeftPath]=useState({
-          lat:createMap.track.start_latlng[1],lng:createMap.track.start_latlng[0]
+          lat:createMap.gps.coordinates[0][1],lng:createMap.gps.coordinates[0][0]
         })
       const [rightPath,setRightPath]=useState({
-        lat:createMap.track.end_latlng[1],lng:createMap.track.end_latlng[0]
+        lat:createMap.gps.coordinates[createMap.gps.coordinates.length-1][1],lng:createMap.gps.coordinates[createMap.gps.coordinates.length-1][0]
       })
 
       const change=(value)=>{
@@ -152,8 +158,8 @@ const mouseOver=()=>{
 
       useEffect(()=>{
           setLeftPath({
-              lat:createMap.track.gps.coordinates[number[0]][1],
-              lng:createMap.track.gps.coordinates[number[0]][0]
+              lat:createMap.gps.coordinates[number[0]][1],
+              lng:createMap.gps.coordinates[number[0]][0]
           
             })
             console.log(number[0])
@@ -161,8 +167,8 @@ const mouseOver=()=>{
       },[number[0]])
       useEffect(()=>{
         setRightPath({
-            lat:createMap.track.gps.coordinates[number[1]][1],
-            lng:createMap.track.gps.coordinates[number[1]][0]
+            lat:createMap.gps.coordinates[number[1]][1],
+            lng:createMap.gps.coordinates[number[1]][0]
         
           })
           console.log(number[1])
@@ -170,39 +176,47 @@ const mouseOver=()=>{
 
     },[number[1]])
     const storePath=[]
+    const altitudes=[]
+   
+    
+    var totalDistance=0
+    
     const [newPath,setNewPath]=useState()
 
     const pathStore=()=>{
         
         for(var i=number[0]; i<number[1]+1; i++){
-            storePath.push(createMap.track.gps.coordinates[i])
-            // console.log(storePath)
-            // setNewPath([...newPath,storePath])
+            storePath.push(createMap.gps.coordinates[i])
+            altitudes.push(createMap.altitude[i].y)
             
         }
-        // dummyMap.gps.coordinates=storePath
-        setNewPath(storePath)
-        // console.log('aaa',newPath)
-        // console.log('qq',dummyMap.gps.coordinates)
+        totalDistance=createMap.distance[number[1]]-createMap.distance[number[0]]
+        console.log(totalDistance,'al',altitudes)
+        // setNewPath(storePath)  
 
-
+        // console.log('..',newPath)
         
-        console.log('..',newPath)
-        const altitudes=[]
-      createMap.track.altitude.map((v)=>(
-        altitudes.push(v.y)
-        ))
+    //   createMap.altitude.map((v)=>(
+    //     altitudes.push(v.y)
+    //     ))
 
         dispatch({
             type:ADD_TRACK_REQUEST,
             data:{
-                trackName:createMap.track.trackName,
-                totalDistance:createMap.track.totalDistance,
-                userId:createMap.track.user.userId,
-                name:createMap.track.user.name,
-                description:createMap.track.description,
-                event:createMap.track.event,
-                checkPoint:createMap.track.checkPoint,
+                trackName,
+                totalDistance,
+                // userId:createMap.track.user.userId,//나중에포스트 sns되면
+                // name:createMap.track.user.name,//나중에 포스트Sns되면
+            // desription:createMap.track.description,//나중에포스트sns되면
+                // checkPoint:createMap.track.checkPoint//나중에포스트sns되면
+                //더미
+                userId:1,
+                name:'김동영',
+                description:'라이딩하기좋아요',
+                checkPoint:[[1,2]],
+                //더미
+                event:createMap.event,
+                
                 gps:storePath,
                 altitude:altitudes
             }
@@ -214,12 +228,12 @@ const mouseOver=()=>{
     <div>
         <Row>
             <Col span={4}>
-                <SideBar></SideBar>
+                {/* <SideBar></SideBar> */}
             </Col>
             <Col span={12}>
             <h1>{number[0]}</h1>
 <h1>{number[1]}</h1>
-        <Slider range defaultValue={number} max={createMap.track.gps.coordinates.length-1} onChange={change} />
+        <Slider range defaultValue={number} max={createMap.gps.coordinates.length-1} onChange={change} />
         {/* {state&&<Switch size="small" checked={disabled} onChange={this.handleDisabledChange} />} */}
     <LoadScript
     googleMapsApiKey="AIzaSyAYsO2CGL0YCjMoLk29eyitFC2PIJnJbYE"
@@ -243,7 +257,7 @@ const mouseOver=()=>{
     <Marker position={rightPath} ></Marker>
     
    
-         <Polyline onDragStart={drag} onLoad={onLoad}  options={options} path={createMap.track.gps.coordinates.map((m)=>(
+         <Polyline onDragStart={drag} onLoad={onLoad}  options={options} path={createMap.gps.coordinates.map((m)=>(
             {
                 lat:m[1],
                 lng:m[0]
@@ -259,6 +273,8 @@ const mouseOver=()=>{
       </GoogleMap>
       </LoadScript>
       
+      
+      <Input placeholder='경로이름을 입력해주세요' value={trackName} onChange={onChangeTrackName}></Input>
       <Button onClick={pathStore}>경로만들기</Button>
 
     <div>
@@ -288,15 +304,16 @@ const mouseOver=()=>{
 //   }
 
 export async function getStaticPaths(){
-    const posts= await axios.get('http://13.124.24.179/api/track')
+    const posts= await axios.get('http://13.124.24.179/api/gpsdata')
    
 
-var paths1=posts.data.trackId.map((id)=>({
+var paths1=posts.data.gpsDataId.map((id)=>({
      params:{id:id._id}
  }))
 
  return{
      paths:paths1,
+    // paths:[  { params: { id: '62256147dc2958292cb17110' } },],
      fallback:false
  }
 }

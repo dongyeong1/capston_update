@@ -36,7 +36,7 @@ import {
 
 function BikeChart() {
   return (
-    <div><div><Radar data={data} /></div></div>
+    <div><div><Radar data={data}  /></div></div>
   )
 }
 

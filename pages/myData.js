@@ -128,6 +128,7 @@ const Container = styled.div`
   }
 
   .ant-card {
+      width:100%;
     border-radius: 7px;
     box-shadow: 0 1px 2px -2px rgb(0 0 0 / 16%), 0 3px 6px 0 rgb(0 0 0 / 12%);
   }

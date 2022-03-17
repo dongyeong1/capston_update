@@ -20,7 +20,10 @@ LOAD_CREATEMAP_SUCCESS,
 LOAD_CREATEMAP_FAILURE,
 ADD_TRACK_REQUEST,
 ADD_TRACK_SUCCESS,
-ADD_TRACK_FAILURE
+ADD_TRACK_FAILURE,
+LOAD_MY_LOCATION_REQUEST,
+LOAD_MY_LOCATION_SUCCESS,
+LOAD_MY_LOCATION_FAILURE
 } from '../reducers/map'
 
 
@@ -59,7 +62,7 @@ function loadMapAPI(data){
 function* loadMap(action){
     try{
         const result = yield call(loadMapAPI,action.data)
-        console.log('nass',result.data)
+        console.log('maedong',result.data)
         yield put({
             type:LOAD_MAP_SUCCESS,
             data:result.data
@@ -143,14 +146,14 @@ function* bikeMap(action){
 
 
 function createmapLoadAPI(data){
-    return axios.get(`http://13.124.24.179/api/track/${data}/rank`) 
+    return axios.get(`http://13.124.24.179/api/gpsdata/${data}`) 
    }
 
 
 function* createmapLoad(action){
     try{
         const result = yield call(createmapLoadAPI,action.data)
-        console.log('rrrrd',result.data)
+        console.log('zxct',result.data)
         yield put({
             type:LOAD_CREATEMAP_SUCCESS,
             data:result.data
@@ -191,6 +194,30 @@ function* addTrack(action){
 }
 
 
+function myLocationAPI(data){
+    return axios.get(`http://13.124.24.179/api/track/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+}
+   
+
+
+function* myLocation(action){
+    try{
+        const result = yield call(myLocationAPI,action.data)
+        yield put({
+            type:LOAD_MY_LOCATION_SUCCESS,
+            data:result.data
+        })
+
+    }catch(err){
+        yield put({
+            type:LOAD_MY_LOCATION_FAILURE,
+            error:err.response.data,
+        })
+
+    }
+}
+
+
 
 function* watchSearchMap(){
     yield takeLatest(SEARCH_MAP_REQUEST,searchMap)
@@ -220,6 +247,10 @@ function* watchAddTrack(){
     yield takeLatest(ADD_TRACK_REQUEST,addTrack)
 }
 
+function* watchMyLocation(){
+    yield takeLatest(LOAD_MY_LOCATION_REQUEST,myLocation)
+}
+
 
 
 
@@ -234,6 +265,8 @@ export default function* rootSaga(){
         fork(watchRunningMap),
         fork(watchCreateMapLoad),
         fork(watchAddTrack),
+        fork(watchMyLocation),
+        
 
       
     ])

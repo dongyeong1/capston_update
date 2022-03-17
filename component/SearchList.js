@@ -1,6 +1,8 @@
 import { Card } from 'antd'
 import React from 'react'
 import { useSelector } from 'react-redux';
+import {Button} from 'antd'
+import styled from "styled-components";
 
 function SearchList({setInfoPosition,setPropsId,index,list,setStrokeWeight,setTarget}) {
     
@@ -36,23 +38,33 @@ function SearchList({setInfoPosition,setPropsId,index,list,setStrokeWeight,setTa
     
    
   return (
-    <>
-    
-    <Card
-    style={{borderRadius:20,marginTop:10}}
-    >
-        <button onClick={()=>polylineClick(list)} onMouseOver={()=>mouseOver(index)} onMouseOut={()=>mouseOut(index)} >{list.trackName}</button>
+    <Container>
+    <Card>
+      <button
+        type="button"
+        onClick={() => polylineClick(list)}
+        onMouseOver={() => mouseOver(index)}
+        onMouseOut={() => mouseOut(index)}
+      >
+        {list.trackName}
+      </button>
 
-        {/* <Card.Meta
-        
-        description={list.name}
-        >
-            
-        </Card.Meta> */}
-
+      {/* <Card.Meta
+      
+      description={list.name}
+      >
+          
+      </Card.Meta> */}
     </Card>
-    </>
+  </Container>
   )
 }
 
 export default SearchList
+const Container = styled.div`
+  .ant-card {
+    // display: inline-block;
+    // height: 33%;
+    height: 150px;
+  }
+`;

@@ -27,15 +27,19 @@ function* addPost(action){
 }
 
 
-function loadPostsAPI(data){
-    return axios.post('http://3.35.239.14/api/index')
+const loadPostsAPI =async()=>{
+    console.log('1111')
+    const res=await axios.get('https://2yubi.shop/api/post/index')
+
+    const data=await res.data
+    return data
     }
     
 
 function* loadPosts(action){
     try{
-        const result = yield call(loadPostsAPI,action.data)
-        console.log('dong',result)
+        const result = yield call(loadPostsAPI)
+        console.log('dongresultss',result)
         yield put({
             type:LOAD_POSTS_SUCCESS,
             data:result.data

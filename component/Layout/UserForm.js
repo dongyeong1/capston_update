@@ -31,7 +31,7 @@ const UserForm = () => {
         }
         style={{}}
       />
-      <DescriptionWrapper title="천세준" />
+      <div>{me.name}</div>
       <Global />
     </CardWrapper>
   );

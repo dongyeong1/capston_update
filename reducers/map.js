@@ -6,7 +6,7 @@ import faker from 'faker';
 export const initialStates={
     searchMap:[],
     createMap:[],
-    
+   
     loadMap:null,
     myMap:null,
  
@@ -23,6 +23,9 @@ export const initialStates={
    searchmapLoading:false,
    searchmapDone:false,
    searchmapError:null,
+   loadMyLocationLoading:false,
+   loadMyLocationDone:false,
+   loadMyLocationError:null,
    loadmapLoading:false,
    loadmapDone:false,
    loadmapError:null,
@@ -68,6 +71,10 @@ export const RUNNING_MAP_FAILURE='RUNNING_MAP_FAILURE'
 export const LOAD_CREATEMAP_REQUEST='LOAD_CREATEMAP_REQUEST'
 export const LOAD_CREATEMAP_SUCCESS='LOAD_CREATEMAP_SUCCESS'
 export const LOAD_CREATEMAP_FAILURE='LOAD_CREATEMAP_FAILURE'
+
+export const LOAD_MY_LOCATION_REQUEST='LOAD_MY_LOCATION_REQUEST'
+export const LOAD_MY_LOCATION_SUCCESS='LOAD_MY_LOCATION_SUCCESS'
+export const LOAD_MY_LOCATION_FAILURE='LOAD_MY_LOCATION_FAILURE'
 
 
 
@@ -370,7 +377,6 @@ function movedummyMap(){
 
 
 
-
   
 
 
@@ -483,6 +489,7 @@ const reducer=(state=initialStates,action)=>{
             case LOAD_MAP_SUCCESS: 
                 draft.loadmapLoading = false;
                 draft.loadmapDone = true;
+                console.log('maessss',action.data)
                 
                      
                 draft.loadMap=action.data
@@ -499,6 +506,26 @@ const reducer=(state=initialStates,action)=>{
                 break;
                 //
 
+
+                case LOAD_MY_LOCATION_REQUEST:
+                    draft.loadMyLocationLoading = true;
+                    draft.loadMyLocationDone = false;
+                    draft.loadMyLocationError = null;
+                    break;
+                case LOAD_MY_LOCATION_SUCCESS: 
+                    draft.loadMyLocationLoading = false;
+                    draft.loadMyLocationDone = true;
+                    action.data.result.map((m)=>[
+                        draft.searchMap.push(m)
+                    ])
+                    break;
+                case LOAD_MY_LOCATION_FAILURE:
+                    draft.loadMyLocationLoading = false;
+                    draft.loadMyLocationError = action.error;
+                    break;
+                    //
+
+
                 case LOAD_CREATEMAP_REQUEST:
                     draft.loadCreatemapLoading = true;
                     draft.loadCreatemapDone = false;
@@ -508,20 +535,13 @@ const reducer=(state=initialStates,action)=>{
                     draft.loadCreatemapLoading = false;
                     draft.loadCreatemapDone = true;
                     draft.createMap=action.data
-                    draft.createMap.track.altitude=draft.createMap.track.altitude.map((a,index)=>(
+                    draft.createMap.altitude=draft.createMap.altitude.map((a,index)=>(
                              {
                                 x:index,
                                y:a
                             }
                         ))     
-                         
-                    // draft.loadMap=action.data
-                    //  draft.loadMap.track.altitude=draft.loadMap.track.altitude.map((a,index)=>(
-                    //      {
-                    //         x:index,
-                    //        y:a
-                    //     }
-                    // ))     
+                  
                     break;
                 case LOAD_CREATEMAP_FAILURE:
                     draft.loadCreatemapLoading = false;

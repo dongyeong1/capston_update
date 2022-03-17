@@ -140,9 +140,9 @@ const dashboard = () => {
     <Container>
       <ChartWrapper>
         <ScoreDiv>
-          <Row gutter={16}>
+          <Row gutter={[16, 16]}>
             {cardScore.map((card, index) => (
-              <Col span={6}>
+              <Col xs={24} md={12} xl={6}>
                 <Card key={index}>
                   <h3>{card.title}</h3>
                   <p>{card.distance}</p>
@@ -151,74 +151,76 @@ const dashboard = () => {
             ))}
           </Row>
         </ScoreDiv>
-        <div>
-          <ChartDiv>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Card>
-                  <h1>라이딩 주간일지</h1>
-                  <p>평균 주행기록은 ??km 입니다</p>
-                  <div>
-                    {typeof window !== "undefined" && (
-                      <Chart
-                        options={bar.options}
-                        series={bar.series}
-                        type="bar"
-                        // width="480px"
-                        height="250px"
-                        styles={{ width: "48vw" }}
-                      />
-                    )}
-                  </div>
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card>
-                  <LoadScript googleMapsApiKey="AIzaSyAONuIuF8EgvSHN6r53EJmqXI7iMDhvSvo">
-                    <GoogleMap
-                      mapContainerStyle={MapStyle}
-                      center={center}
-                      zoom={10}
+        <ChartDiv>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} xl={12}>
+              <Card>
+                <h1>라이딩 주간일지</h1>
+                <p>평균 주행기록은 ??km 입니다</p>
+                <div>
+                  {typeof window !== "undefined" && (
+                    <Chart
+                      options={bar.options}
+                      series={bar.series}
+                      type="bar"
+                      // width="480px"
+                      height="250px"
+                      styles={{ width: "48vw" }}
                     />
-                  </LoadScript>
-                </Card>
-              </Col>
-            </Row>
-          </ChartDiv>
-        </div>
+                  )}
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} xl={12}>
+              <Card>
+                <LoadScript googleMapsApiKey="AIzaSyAONuIuF8EgvSHN6r53EJmqXI7iMDhvSvo">
+                  <GoogleMap
+                    mapContainerStyle={MapStyle}
+                    center={center}
+                    zoom={10}
+                  />
+                </LoadScript>
+              </Card>
+            </Col>
+          </Row>
+        </ChartDiv>
         <CardDiv>
-          <Card>
-            <Table dataSource={data} pagination={false}>
-              <Column title="유형" dataIndex="kind" key="kind" />
-              <Column
-                title="이름"
-                dataIndex="name"
-                key="name"
-                render={(name) => <a>{name}</a>}
-              />
-              <Column
-                title="거리"
-                dataIndex="distance"
-                key="distance"
-                render={(v) => <p>{v}km</p>}
-              />
-              <Column
-                title="고도"
-                dataIndex="altitude"
-                key="altitude"
-                sorter={(a, b) => a.altitude - b.altitude}
-                render={(v) => <p>{v}m</p>}
-              />
-              <Column title="시간" dataIndex="time" key="time" />
-              <Column
-                title="날짜"
-                dataIndex="date"
-                key="date"
-                render={(v) => dateFormat(v)}
-                sorter={(a, b) => moment(a.date) - moment(b.date)}
-              />
-            </Table>
-          </Card>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Card>
+                <Table dataSource={data} pagination={false}>
+                  <Column title="유형" dataIndex="kind" key="kind" />
+                  <Column
+                    title="이름"
+                    dataIndex="name"
+                    key="name"
+                    render={(name) => <a>{name}</a>}
+                  />
+                  <Column
+                    title="거리"
+                    dataIndex="distance"
+                    key="distance"
+                    render={(v) => <p>{v}km</p>}
+                  />
+                  <Column
+                    title="고도"
+                    dataIndex="altitude"
+                    key="altitude"
+                    sorter={(a, b) => a.altitude - b.altitude}
+                    render={(v) => <p>{v}m</p>}
+                  />
+                  <Column title="시간" dataIndex="time" key="time" />
+                  <Column
+                    title="날짜"
+                    dataIndex="date"
+                    key="date"
+                    render={(v) => dateFormat(v)}
+                    sorter={(a, b) => moment(a.date) - moment(b.date)}
+                  />
+                </Table>
+              </Card>
+            </Col>
+          </Row>
         </CardDiv>
       </ChartWrapper>
       <ProfileDiv>
@@ -257,13 +259,14 @@ const dashboard = () => {
           </Card>
         </ProfileWrapper>
         <PieDiv>
-          <CardWrapper size="default" title="나의 운동종목">
+          <CardWrapper size="default">
+            <h3>나의 운동종목</h3>
             <Chart
               type="donut"
               options={pie.chartOptions}
               series={pie.series}
-              width={300}
-              height={280}
+              width="100%"
+              height={270}
             />
           </CardWrapper>
         </PieDiv>
@@ -273,17 +276,29 @@ const dashboard = () => {
 };
 
 export default dashboard;
-
+/*
+Container
+ChartWrapper
+ProfileDiv
+ProfileWrapper
+PieDiv  // CSS 반응형 추가
+ */
 const Container = styled.div`
   display: flex;
-  width: 100%;
+
+  width: calc(100%-220px);
   height: 100%;
   // padding: 4% 9%;
   // margin: 0 auto;
 
   .ant-card {
+    width: 100%;
     border-radius: 9px;
     box-shadow: 0 1px 2px -2px rgb(0 0 0 / 16%), 0 3px 6px 0 rgb(0 0 0 / 12%);
+  }
+
+  @media Screen and (max-width: 1280px) {
+    flex-direction: column;
   }
 `;
 
@@ -304,11 +319,11 @@ const ScoreDiv = styled.div`
   }
 
   .ant-card-body {
-    margin-top: 20px;
     display: inline-block;
     width: 100%;
     height: 100%;
     padding: 10px;
+    padding-top: 30px;
     text-align: center;
   }
 `;
@@ -335,10 +350,15 @@ const QuestionDiv = styled.div`
 const CardWrapper = styled(Card)`
   width: 100%;
   height: 100%;
+  text-align: center;
   // margin-top: 16px;
 
   .ant-card-body {
     padding: 0 !important;
+  }
+
+  h3 {
+    padding: 15px;
   }
 `;
 
@@ -353,6 +373,10 @@ const ChartWrapper = styled.div`
   // display: flex;
   width: 100%;
   height: 100%;
+
+  @media Screen and (max-width: 1280px) {
+    order: 2;
+  }
 `;
 
 const CardDiv = styled.div`
@@ -366,7 +390,6 @@ const CardDiv = styled.div`
 const ChartDiv = styled.div`
   display: inline-block;
   width: 100%;
-  // height: 100%;
   margin-top: 16px;
 
   .apexcharts-canvas {
@@ -417,16 +440,22 @@ const ProfileDiv = styled.div`
     color: #fff;
   }
 
-  // .ant-card {
-  //   width: 100%;
-  //   border-radius: 0;
-  // }
+  @media Screen and (max-width: 1280px) {
+    order: 1;
+    display: flex;
+    width: 100%;
+    margin: 0;
+  }
+
+  @media Screen and (max-width: 767px) {
+    flex-direction: column;
+  }
 `;
 
 const ProfileWrapper = styled.div`
   display: inline-block;
   width: 100%;
-  height: 60%;
+  height: 59%;
   text-align: center;
 
   h1 {
@@ -435,6 +464,16 @@ const ProfileWrapper = styled.div`
 
   .ant-card {
     height: 97%;
+  }
+
+  @media Screen and (max-width: 1280px) {
+    width: 50%;
+    height: 100%;
+  }
+
+  @media Screen and (max-width: 767px) {
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -445,5 +484,15 @@ const PieDiv = styled.div`
 
   .ant-card {
     width: 100%;
+  }
+
+  @media Screen and (max-width: 1280px) {
+    width: 50%;
+    height: 100%;
+  }
+
+  @media Screen and (max-width: 767px) {
+    width: 100%;
+    height: 100%;
   }
 `;

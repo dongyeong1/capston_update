@@ -59,7 +59,7 @@ const PostCard = ({post}) => {
       <Card
         hoverable
         // cover={post.Images[0] && <PostImages images={post.Images} />}
-        style={{marginTop:30 ,marginLeft:100,width:'40vw',borderRadius:20}}
+        style={{width:500, height:'29vw',borderRadius:20, marginBottom:20,marginLeft:100}}
         // actions={[
         //   <RetweetOutlined key="retweet" />,
         //   liked
@@ -92,21 +92,21 @@ const PostCard = ({post}) => {
 
         <a style={{bottom:30,fontSize:20,position:'relative'}}>{post.user.name}</a><br/>
         {/* {isFollowing===true ? <Button style={{bottom:30,fontSize:15,position:'relative',left:460,bottom:60}}>언팔로잉</Button> :<Button >팔로잉</Button>} */}
-        <FollowButton  post={post}></FollowButton>
+        {/* <FollowButton  post={post}></FollowButton> */}
 
-        <a style={{right:20,bottom:30,color:'gray',fontSize:12,position:'relative'}}>1 hours ago</a>
+        <a style={{bottom:60,left:40,color:'gray',fontSize:12,position:'relative'}}>1 hours ago</a>
         <div>{post.content}</div>
         
         
         
         <img   width={300} height={300} alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />
         <div style={{marginTop:10}}>
-            <button >{liked
+            <Button style={{borderWidth:0}}>{liked
            ? <HeartTwoTone style={{fontSize:25}} twoToneColor="#eb2f96" key="heart" onClick={onToggleLike} />
-            : <HeartOutlined style={{fontSize:25}} key="heart" onClick={onToggleLike} />}<a style={{marginLeft:5,fontSize:15}}>28</a></button>
-            <button style={{marginLeft:10}}>
-                <CommentOutlined style={{fontßSize:25}} /><a style={{marginLeft:5,fontSize:15}}>10</a>
-            </button>
+            : <HeartOutlined style={{fontSize:25}} key="heart" onClick={onToggleLike} />}<a style={{marginLeft:5,fontSize:15}}>28</a></Button>
+            <Button  style={{marginLeft:10,borderWidth:0}}>
+                <CommentOutlined style={{fontSize:25}} /><a style={{marginLeft:5,fontSize:15}}>10</a>
+            </Button>
         </div>
         
         
@@ -116,23 +116,23 @@ const PostCard = ({post}) => {
         <Button style={{width:160,marginLeft:10,borderRadius:15,top:10}} onClick={onToggleComment}><CommentOutlined />comment</Button>
         {/* <Button style={{width:160,marginLeft:10,borderRadius:15,top:10}}><StepForwardOutlined/>retweet</Button> */}
       </Card>
-       {/* {commentFormOpened && (
+       {commentFormOpened && (
         <>
           <CommentForm post={post} />
           <List
           style={{width:500,marginLeft:100}}
-            header={`${post.Comments.length} 댓글`}
+            header={`${post.comment.length} 댓글`}
             itemLayout="horizontal"
-            dataSource={post.Comments}
+            dataSource={post.comment}
             renderItem={(item) => (
               <li>
                 <Comment
-                  author={item.User.nickname}
+                  author={item.user.name}
                   avatar={(
                     // <Link href={{ pathname: '/user', query: { id: item.User.id } }} as={`/user/${item.User.id}`}>
                       
                     // </Link>
-                    <a><Avatar>{item.User.nickname[0]}</Avatar></a>
+                    <a><Avatar>{item.user.name[0]}</Avatar></a>
                   )}
                   content={item.content}
                 />
@@ -140,7 +140,7 @@ const PostCard = ({post}) => {
             )}
           />
         </>
-      )}  */}
+      )} 
       </>
   );
 };

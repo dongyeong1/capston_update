@@ -45,7 +45,8 @@ function signup() {
 //   })
 
 
-    useEffect(()=>{
+    
+(()=>{
         if(signUpDone){
             Router.push('/')
         }

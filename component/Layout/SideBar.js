@@ -1,20 +1,28 @@
-import { Layout, Progress, Card, Avatar } from "antd";
+import { Layout, Progress, Card, Avatar, Button } from "antd";
 import Link from "next/link";
 import styled, { createGlobalStyle } from "styled-components";
 import UserForm from "./UserForm";
 import MenuMenu from "./Menu";
-// import Image from "next/image";
+
+import { signOut, useSession } from "next-auth/react";
+import { useSelector } from "react-redux";
 
 const { Sider } = Layout;
 const { Meta } = Card;
 
 const SideBar = ({ isSide, showSide }) => {
+  const { data: session } = useSession(); // 소셜로그인
+  const { me } = useSelector((state) => state.user);
+
   return (
     <SiderWrapper
       width={220}
       collapsible
       collapsed={isSide}
       onCollapse={showSide}
+      // 지우기
+      // onMouseEnter={showSide}
+      // onMouseLeave={showSide}
     >
       <Global />
       <LogoWrapper>
@@ -36,14 +44,33 @@ const SideBar = ({ isSide, showSide }) => {
         </div>
       </LogoWrapper>
 
+      {/* 코드추가 할것 */}
       {isSide ? (
-        <SpaceDiv>
-          <Avatar size={44} src="kurumi.jpg" />
-        </SpaceDiv>
+        session ? (
+          <SpaceDiv>
+            <Avatar size={44} src={session.user.image} />
+          </SpaceDiv>
+        ) : (
+          <SpaceDiv>
+            <Avatar size={44} src={me.profile} />
+          </SpaceDiv>
+        )
       ) : (
         <UserForm />
       )}
       <MenuMenu />
+
+      {!isSide ? (
+        <LogoutBtn>
+          {session && (
+            <button onClick={() => signOut()}>
+              <img src="logout.png" /> 로그아웃
+            </button>
+          )}
+        </LogoutBtn>
+      ) : null}
+      {/* 여기까지 */}
+
       {/* <ProgressDiv>
         {!isSide && (
           <Card hoverable>
@@ -55,6 +82,26 @@ const SideBar = ({ isSide, showSide }) => {
     </SiderWrapper>
   );
 };
+
+const LogoutBtn = styled.div`
+  position: absolute;
+  left: 25%;
+  bottom: 7%;
+  color: red;
+
+  button {
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-overflow: ellipsis;
+  }
+
+  img {
+    width: 32px;
+    height: 32px;
+  }
+`;
 
 const LogoWrapper = styled.div`
   // display: inline-block;
@@ -113,6 +160,7 @@ const SpaceDiv = styled.div`
 
 const SiderWrapper = styled(Sider)`
   // 사이드바
+  transition: all 0.2s;
   overflow: auto;
   position: sticky;
   top: 0;
@@ -148,6 +196,11 @@ const SiderWrapper = styled(Sider)`
   .a:hover {
     color: #1890ff;
   }
+
+  // @media and Screen (max-width: 480px) {
+  //   .ant-layout-sider {
+  //     display: none !important;
+  //   }
 `;
 
 const Global = createGlobalStyle` // 전역 css

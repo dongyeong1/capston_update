@@ -12,18 +12,18 @@ const AppLayout = ({ children }) => {
 
   const showSide = () => {
     setIsSide((prev) => !prev);
-  };
+}
   return (
     <div style={{ minHeight: "100vh" }}>
       <Layout>
         <SideBar isSide={!isSide} showSide={showSide} />
-        <Layout style={{ backgroundColor: "rgba( 255, 255, 255, 0.5 )" }}>
+        <Layout style={{ backgroundColor: "white" }}>
           <Header />
        
            <Content
             style={{
-              padding:"2% 12%",
-              height:'80vh'
+              padding:"3% 12%",
+             
             }}
           >
             {children}

@@ -14,12 +14,7 @@ function myRecord() {
     const {me}=useSelector((state)=>state.user)
     
     const createLink=(data)=>{
-        console.log('aa',data.id)
         setPropsId(data.id)
-        console.log('qqqq',propsId)
-        
-
-
     }
 
     useEffect(()=>{
@@ -43,6 +38,7 @@ function myRecord() {
         {me.posts.map((v)=>(
             <Card
             hoverable
+            style={{width:1000}}
             >
                 {v.title}
                 <Button style={{fontSize:15,marginLeft:800}} onClick={()=>createLink(v)}>경로만들기</Button>

@@ -26,10 +26,11 @@ function RouteInformation() {
         bordered
        
       >
-        <div>-{loadMap.track.name}-</div>
-         거리:{loadMap.track.distance}<br></br>
-         예상시간:{3+':'+20+':'+55}<br></br>
-         생성날짜:{loadMap.track.createdAt}
+        <div>
+         거리:{loadMap.track.totalDistance}km<br></br>
+         생성날짜:{loadMap.track.createdAt}<br></br>
+         설명:{loadMap.track.description}
+         </div>
 
 
        

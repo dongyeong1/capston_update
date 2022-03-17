@@ -1,81 +1,107 @@
-import React,{useCallback,useState}from 'react'
-import {Card,Avatar,Button} from 'antd'
-import { useDispatch, useSelector } from 'react-redux'
-import {  logoutRequestAction, LOGOUT_REQUEST} from '../reducers/user';
-import Following from './Following';
-import Follower from './Follower';
+import React from "react";
+import { Card, Avatar, Descriptions } from "antd";
+import styled, { createGlobalStyle } from "styled-components";
+import { useSelector } from "react-redux";
 
-function UserProfile() {
-    const {me,logOutLoading}=useSelector((state)=>state.user)
+import { useSession } from "next-auth/react";
 
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isModalVisibless, setIsModalVisibless] = useState(false);
-    const [data,setData]=useState([])
+const UserForm = () => {
+  const { data: session } = useSession();
+  const { me } = useSelector((state) => state.user);
 
-    const FollowingModal = () => {
-     
-      setIsModalVisible(true);
-      
-    };
+  return (
+    <Container>
+      <CardWrapper
+        bordered={true}
+        actions={[
+          <div key="followings">
+            팔로잉
+            <br />
+            {me.followings.length}
+          </div>,
+          <div key="followings">
+            팔로워
+            <br />
+            {me.followers.length}
+          </div>,
+          <div key="twit">
+            게시물
+            <br />
+            {me.posts.length}
+          </div>,
+        ]}
+      >
+        {session ? (
+          <CardMetaWrapper
+            avatar={
+              <Avatar
+                src={session.user.image}
+                size={52}
+                style={{ background: "#00a2ae" }}
+              >
+                Image
+              </Avatar>
+            }
+          />
+        ) : (
+          <CardMetaWrapper
+            avatar={
+              <Avatar
+                src={me.profile.src}
+                size={52}
+                style={{ background: "#00a2ae" }}
+              >
+                Image
+              </Avatar>
+            }
+          />
+        )}
+        <DescriptionWrapper title="천세준" />
+        <Global />
+      </CardWrapper>
+    </Container>
+  );
+};
 
-    const FollowerModal=()=>{
-  
+const Container = styled.div`
+  height: 220px;
+`;
 
+const CardMetaWrapper = styled(Card.Meta)`
+  height: 60px;
+  .ant-card-meta-avatar {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 0;
+`;
 
-        setIsModalVisibless(true);
-    }
-  
+const DescriptionWrapper = styled(Descriptions)`
+  .ant-descriptions-header {
+    text-align: center;
+    margin: 0;
+    padding-top: 20px;
+  }
+`;
 
-    const dispatch=useDispatch();
+const CardWrapper = styled(Card)`
+  // z-index: 1;
+  box-shadow: 0px 8px 24px rgb(13 13 18 / 4%);
+  .ant-card-actions li {
+    overflow: hidden;
+  }
+`;
 
-  
-    const onLogoutForm=useCallback(()=>{
-       
-        dispatch({
-            type:LOGOUT_REQUEST
-        })
-    },[])
-
-    return (
-        <div>
-            <Card
-            style={{height:220,width:220,marginTop:50,marginLeft:100,borderRadius:30,position:'fixed'}}
-            hoverable
-
-
-               actions={[
-                   <button onClick={FollowingModal} > <div key="following">팔로잉<br/>{me.Followings.length}</div></button>
-                   
-                ,
-                <button onClick={FollowerModal} > <div key="follower">팔로워<br/>{me.Followers.length}</div>
-                </button>,
-                <div key="twit">게시물수<br/>{me.Posts.length}<br/></div>
-               ,
-
-                
-            ]} 
-             
-         
-            >
-                <Following visible={isModalVisible} setIsModalVisible={setIsModalVisible} data={me.Followings}></Following>
-                <Follower visible={isModalVisibless} setIsModalVisible={setIsModalVisibless} data={me.Followers}></Follower>
-                <Card.Meta
-                avatar={<Avatar>{me.nickname[0]}</Avatar>}
-                title={me.nickname}
-                
-                />
-
-{/* <Button onClick={onLogoutForm} loading={logOutLoading} size='small' style={{marginLeft:35}}> 로그아웃</Button> */}
-                라이딩점수:200
-              
-
-
-                
-            </Card>
-          
-            
-        </div>
-    )
+const Global = createGlobalStyle`
+.ant-card {
+  width: 200px;
+  margin: 0 10px;
+  margin-top: 20px;
+  position: relative;
 }
+.ant-card-body {
+  padding-bottom:17px;
+}
+`;
 
-export default UserProfile
+export default UserForm;

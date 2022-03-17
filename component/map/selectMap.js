@@ -5,15 +5,56 @@ import { Polyline ,Marker,StreetViewPanorama,MarkerClusterer} from '@react-googl
 import { InfoWindow } from '@react-google-maps/api';
 import Router from 'next/router'
 import {LOAD_MAP_REQUEST} from '../../reducers/map'
-import { MOVING_MAP_REQUEST,BIKE_MAP_REQUEST,RUNNING_MAP_REQUEST,SEARCH_MAP_REQUEST } from '../../reducers/map';
-import {Input,Button,Row,Col,Card} from 'antd'
+import { MOVING_MAP_REQUEST,BIKE_MAP_REQUEST,RUNNING_MAP_REQUEST,SEARCH_MAP_REQUEST,LOAD_MY_LOCATION_REQUEST } from '../../reducers/map';
+import {Input,Button,Row,Col,Card,Pagination} from 'antd'
 import GeomHandle from '../GoogleMap'
 import SearchList from '../SearchList';
 import Link from 'next/link';
 import styled from "styled-components";
+import wrapper from '../../store/configureStore';
+import { SearchOutlined } from "@ant-design/icons";
+
+
+
+
+  var lat=1
+  var lng=2
 
 
 function selectMap({}) {
+    const {myLocation}=useSelector((state)=>state.map)
+
+    const [geom ,setGeom]=useState()
+    const { Search } = Input;
+
+
+    const [loadMap,setLoadMap]=useState(false)
+
+    function getLocation() {
+        if (navigator.geolocation) { // GPS를 지원하면
+          navigator.geolocation.getCurrentPosition(function(position) {
+             
+            setGeom({
+                lat:position.coords.latitude,
+                lng:position.coords.longitude
+            })
+            setLoadMap(true)
+
+           
+          }, function(error) {
+            console.error(error);
+          }, {
+            enableHighAccuracy: false,
+            maximumAge: 0,
+            timeout: Infinity
+          });
+        } else {
+          alert('GPS를 지원하지 않습니다');
+        }
+      }
+
+   
+   
 
     const [isState,setIsState]=useState(false)
     const [mapState,setMapState]= useState('B')
@@ -21,51 +62,54 @@ function selectMap({}) {
    
     const dispatch=useDispatch()
 
+    // const mapContainerStyle = {
+    // marginTop:60,
+    // height: "720px",
+    // width: "1000px"
+    // };
     const mapContainerStyle = {
-    marginTop:60,
-    height: "400px",
-    width: "700px"
-    };
-  
+        // Google Map 스타일
+        width: "100%",
+        height: "80vh",
+        borderRadius: "15px",
+        padding: "0 30px",
+      };
 
     const {searchMap}=useSelector((state)=>state.map)
 
     // const [geom ,setGeom]=useState({lat:35.969997373905, lng: 128.45170755523503})
     const [mapref, setMapRef] = useState(null);
 
+    useEffect(()=>{
+        getLocation()
+        if(mapref){
+            dispatch({
+                type:LOAD_MY_LOCATION_REQUEST,
+                data:{
+                    north:{
+                      lat:mapref.getBounds().getNorthEast().lat(),
+                      lng:mapref.getBounds().getNorthEast().lng()
+                    },
+                    south:{
+                      lat:mapref.getBounds().getSouthWest().lat(),
+                      lng:mapref.getBounds().getSouthWest().lng()
+                    },
+                    event:mapState
+          
+                  }
+            })
+        }
+      
+    },[loadMap])
+
 
     const handleOnLoad = map => {
         setMapRef(map);
         console.log('load됨')
-        
       };
 
-      const [nelat,setNelat]=useState()
-      const [nelng,setNelng]=useState()
-
-      const [swlat,setSwlat]=useState()
-      const [swlng,setSwlng]=useState()
-
-
-
       const handleCenterChanged = () => {
-        if (mapref) {
-            
-        //   var zoom=mapref.getZoom()
-          var nt=mapref.getBounds().getNorthEast().lat();
-          var ng=mapref.getBounds().getNorthEast().lng();
-
-          var st=mapref.getBounds().getSouthWest().lat();
-          var sg=mapref.getBounds().getSouthWest().lng();
-
-          setNelat(nt)
-          setNelng(ng)
-          setSwlat(st)
-          setSwlng(sg)
-
-        
-        }
-
+    
         dispatch({ 
           type:MOVING_MAP_REQUEST,
           data:{
@@ -104,7 +148,6 @@ function selectMap({}) {
 
     const {searchmapLoading}=useSelector((state)=>state.map)
 
-   const [geom ,setGeom]=useState({lat:35.969997373905, lng: 128.45170755523503})
 
 
    const handleButton = async() => {
@@ -167,6 +210,7 @@ function selectMap({}) {
             lat:positionData.gps.coordinates[3][1],
             lng:positionData.gps.coordinates[3][0]
         })
+        console.log('qqq',positionData)
         setPropsId(positionData._id)
         // setPropsPosition(positionData)
         setTarget(true)
@@ -275,111 +319,247 @@ function selectMap({}) {
 
 
   return (
-    <div>
-
+    <Container>
+      <CardDiv>
         <Row>
-            <Col span={10}>
-                <Input.Search 
-                loading={searchmapLoading} enterButton="검색" onPressEnter={handleButton}
-                id="address"  style={{verticalAlign:'middle' ,width:'300px'}} /><br></br>
-                
+          <Col span={12}>
+            <LeftDiv>
+              <div style={{ height: "25%" }}>
+                <Search
+                  loading={searchmapLoading}
+                  onPressEnter={handleButton}
+                  placeholder="코스를 입력해주세요"
+                  enterButton
+                  // allowClear
+                  icon={<SearchOutlined />}
+                  id="address"
+                  size="large"
+                />
                 <Buttons>
-                <Button onClick={bikeSelectMap}>자전거</Button>
-                <Button onClick={runningSelectMap}>달리기</Button> 
+                  <Button onClick={bikeSelectMap}>자전거</Button>
+                  <Button onClick={runningSelectMap}>달리기</Button>
                 </Buttons>
+                <p>코스찾기</p>
+              </div>
+              <RowDiv gutter={[0, 16]}>
+                {searchMap.map((p, index) => (
+                  <Col span={24}>
+                    <SearchList
+                      setInfoPosition={setInfoPosition}
+                      setPropsId={setPropsId}
+                      setTarget={setTarget}
+                      index={index}
+                      setStrokeWeight={setStrokeWeight}
+                      list={p}
+                      key={p.id}
+                    ></SearchList>
+                  </Col>
+                ))}
+              </RowDiv>
+              <Page
+                defaultCurrent={1}
+                defaultPageSize={3}
+                total={searchMap.lenth}
+                // onChange={onChangePage}
+              />
+            </LeftDiv>
+          </Col>
 
-                 <div>
-                    {
-                        searchMap.map((p,index)=>(
-                            
-                          <SearchList setInfoPosition={setInfoPosition} setPropsId={setPropsId} setTarget={setTarget} index={index} setStrokeWeight={setStrokeWeight} list={p} key={p.id} ></SearchList>
-                            
-                        ))
-                        }
-                </div> 
-                
-            </Col>
-
-            <Col span={10}>
-            <LoadScript
-            googleMapsApiKey="AIzaSyAYsO2CGL0YCjMoLk29eyitFC2PIJnJbYE"
-        >
-            
-          <GoogleMap
-            id="marker-example"
-            mapContainerStyle={mapContainerStyle}
-            zoom={13}
-            center={geom}
-            onLoad={handleOnLoad}
-            onDragEnd={handleCenterChanged}
-            // onZoomChanged={handleCenterChanged}
-          >
-
-        <MarkerClusterer options={optionss}>
-                {(clusterer) =>
+          <Col span={12}>
+            <LoadScript googleMapsApiKey="AIzaSyAYsO2CGL0YCjMoLk29eyitFC2PIJnJbYE">
+              <GoogleMap
+                id="marker-example"
+                mapContainerStyle={mapContainerStyle}
+                zoom={13}
+                center={geom}
+                onLoad={handleOnLoad}
+                onDragEnd={handleCenterChanged}
+                // onZoomChanged={handleCenterChanged}
+              >
+                <MarkerClusterer options={optionss}>
+                  {(clusterer) =>
                     searchMap.map((p) => (
-                    <Marker  key={createKey(p)} position={{lat:p.start_latlng[1],lng:p.start_latlng[0]}} clusterer={clusterer}  icon={{
-                    scaledSize: new google.maps.Size(30,30),} } />
+                      <Marker
+                        key={createKey(p)}
+                        position={{
+                          lat: p.start_latlng[1],
+                          lng: p.start_latlng[0],
+                        }}
+                        clusterer={clusterer}
+                        icon={{
+                          scaledSize: new google.maps.Size(30, 30),
+                        }}
+                      />
                     ))
-                }
-        </MarkerClusterer>
-            
+                  }
+                </MarkerClusterer>
 
-        {searchMap.map((m,index)=>(
-            <Polyline  onRightClick={()=>polylineClick(m)} onMouseOver={()=>mouseOver(index)} onMouseOut={()=>mouseOut(index)}  options={{strokeWeight:strokeWeight[index],clickable:true,visible:true,strokeColor: '#FF0000',fillColor: '#FF0000',}} path={m.gps.coordinates.map((p)=>(
-                {
-                    lat:p[1],
-                    lng:p[0]
-                }
-            ))}></Polyline>
-            
-            ))}
-            
-        {target&&<InfoWindow position={infoPosition} onCloseClick={closeClick}>
-            <div style={divStyle}>
-                <h1>동영</h1>
-                    {/* <Link href={{
+                {searchMap.map((m, index) => (
+                  <Polyline
+                    onRightClick={() => polylineClick(m)}
+                    onMouseOver={() => mouseOver(index)}
+                    onMouseOut={() => mouseOut(index)}
+                    options={{
+                      strokeWeight: strokeWeight[index],
+                      clickable: true,
+                      visible: true,
+                      strokeColor: "#FF0000",
+                      fillColor: "#FF0000",
+                    }}
+                    path={m.gps.coordinates.map((p) => ({
+                      lat: p[1],
+                      lng: p[0],
+                    }))}
+                  ></Polyline>
+                ))}
+
+                {target && (
+                  <InfoWindow position={infoPosition} onCloseClick={closeClick}>
+                    <div style={divStyle}>
+                      <h1>동영</h1>
+                      {/* <Link href={{
                         pathname:'/Route/[id]',
                         query: {id:propsId},
                     }}><a>상세보기</a></Link>
                      */}
-                <button onClick={oneRoute}>상세보기</button>
-            </div>
-            </InfoWindow>} 
-            
-
-        
-       
-            
-          </GoogleMap>
-          </LoadScript>
-            
-            </Col>
-
+                      <button onClick={oneRoute}>상세보기</button>
+                    </div>
+                  </InfoWindow>
+                )}
+              </GoogleMap>
+            </LoadScript>
+          </Col>
         </Row>
-
-    
-
-   
-             
-
-    </div>
+      </CardDiv>
+    </Container>
   )
 }
 
+
+
+
 export default selectMap
 
-const Buttons= styled.div`
+export const getStaticProps=wrapper.getStaticProps(async (context)=>{
+ 
+    context.store.dispatch({
+            type:LOAD_MY_LOCATION_REQUEST,
+            data:{
+                north:{
+                  lat:mapref.getBounds().getNorthEast().lat(),
+                  lng:mapref.getBounds().getNorthEast().lng()
+                },
+                south:{
+                  lat:mapref.getBounds().getSouthWest().lat(),
+                  lng:mapref.getBounds().getSouthWest().lng()
+                },
+                event:mapState
+      
+              }
+        })
+    context.store.dispatch(END)
+    await context.store.sagaTask.toPromise()
+
+})
 
 
-Button:hover {
-    background:#1683e8;
+const Container = styled.div`
+  // 전체 div
+  width: 100%;
+
+  .ant-input {
+    border-radius: 15px;
+    border-radius: 1px solid #1890ff;
+  }
+
+  .ant-input-group-wrapper {
+    margin-bottom: 20px;
+  }
+
+  .ant-input-group {
+    width: 90%;
+    width: 100%;
+    // margin: 0 auto;
+  }
+
+  .ant-input-search {
+    border-radius: 9px !important;
+    // position: relative;
+    // right: 15px;
+    // z-index: 1;
+  }
+
+  .ant-input-search-button {
+    // border-radius: 55% !important;
+    // border-top-right-radius: 9px !important;
+    // border-bottom-right-radius: 9px !important;
+  }
+`;
+
+const mapContainerStyle = {
+  // Google Map 스타일
+  width: "100%",
+  height: "80vh",
+  borderRadius: "15px",
+  padding: "0 30px",
+};
+
+const CardDiv = styled(Card)`
+  width: 100%;
+
+  border-radius: 15px;
+  box-shadow: 0 1px 2px -2px rgb(0 0 0 / 16%), 0 3px 6px 0 rgb(0 0 0 / 12%);
+`;
+
+// const RightDiv = styled.div``;
+
+const LeftDiv = styled.div`
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding: 0 5%;
+
+  p {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 30px auto;
+  }
+`;
+
+const Page = styled(Pagination)`
+  text-align: center;
+`;
+
+const Buttons = styled.div`
+  display: inline-block;
+  width: 90%;
+  width: 100%;
+
+  Button {
+    height: 33px;
+    border-radius: 15px;
+    margin-right: 10px;
+  }
+
+  Button:hover {
+    background: #1683e8;
     border-color: #1683e8;
     color: #fff;
   }
 
   Button:focus {
-    background:#1683e8;
+    background: #1683e8;
     color: #fff;
   }
-`
+`;
+
+const RowDiv = styled(Row)`
+  display: inline-block;
+  width: 100%;
+  height: 65%;
+  border: 1px solid grey;
+  padding-bottom: 30px;
+`;
+
+
+

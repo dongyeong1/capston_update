@@ -9,8 +9,10 @@ function FollowButton({post}) {
 
   const dispatch=useDispatch();
   const {me, follower} = useSelector((state)=>state.user)
+
   
-  const isFollowing=me.followings.find((v)=>v.id===post.user.id)
+  
+  const isFollowing=me.user.followings.find((v)=>v.id===post.User.id)
  
    
 
@@ -31,7 +33,7 @@ function FollowButton({post}) {
   
   return (
     <div>
-        {isFollowing?<Button style={{bottom:30,fontSize:15,position:'relative',left:460,bottom:60}} onClick={follow}>언팔로우</Button>:<Button style={{bottom:30,fontSize:15,position:'relative',left:460,bottom:60}} onClick={follow}>팔로우</Button>}
+        {isFollowing?<Button style={{bottom:30,fontSize:15,position:'relative',left:350,bottom:60}} onClick={follow}>언팔로우</Button>:<Button style={{bottom:30,fontSize:15,position:'relative',left:350,bottom:60}} onClick={follow}>팔로우</Button>}
         </div>
   )
 }

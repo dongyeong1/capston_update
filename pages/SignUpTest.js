@@ -12,17 +12,16 @@ import {
   Space,
   Radio,
 } from "antd";
-import useInput from '../hooks/useInputTest';
-import { useDispatch } from 'react-redux';
-import {SIGNUP_REQUEST} from '../reducers/user'
-
+import useInput from "../hooks/useInputTest";
+import moment from "moment";
+import { useDispatch } from "react-redux";
+import { SIGNUP_REQUEST } from "../reducers/user";
+import { CloseOutlined } from "@ant-design/icons";
 
 const { Meta } = Card;
 const { Option } = Select;
 
 const Signup = ({ isModal, openModal }) => {
-
-
   const [form] = Form.useForm();
 
   const [btnValue, setBtnValue] = useState(null);
@@ -51,48 +50,62 @@ const Signup = ({ isModal, openModal }) => {
   const [lastName, onChangeLastName] = useInput("");
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
-  const [birthday, onChangeBirthday] = useInput();
-  const [gender, onChangeGender] = useInput("");
 
-  // /api/register
+  // 추가하기
+  const [sex, setSex] = useState("");
+  const onChangeSex = (v) => {
+    setSex(v);
+  };
 
-  const dispatch=useDispatch()
+  const [birth, setBirth] = useState({
+    birth: "",
+    month: "",
+    day: "",
+  });
+
+  const onChangeBirth = (date) => {
+    const dateString = moment(date).format("YYYY");
+    setBirth({ ...birth, birth: dateString });
+  };
+
+  const onChangeMonth = (e) => {
+    setBirth({ ...birth, month: e });
+  };
+
+  const onChangeDay = (e) => {
+    setBirth({ ...birth, day: e });
+  };
+  // 여기까지
+
+  const dispatch = useDispatch();
 
   const onSubmit = () => {
     let body = {
-        
-      name: "김동영",
-      weight:'30kg',
-      location:'김해',
+      name: firstName + lastName,
       email: email,
       password: password,
-      birth: '2020-02-27',
-      sex: '여성',
+      sex: sex,
+      weight: "100kg",
+      location: "대구",
+      birth: birth.birth + "-" + birth.month + "-" + birth.day,
     };
 
     console.log(body);
 
     dispatch({
-        type:SIGNUP_REQUEST,
-        data:body
-    })
-
+      type: SIGNUP_REQUEST,
+      data: body,
+    });
   };
 
   return (
-    <ModalWrapper
-      // centered
-      visible={isModal}
-      // onOk={openModal}
-      onCancel={openModal}
-      footer={null}
-    >
+    <ModalWrapper visible={isModal} onCancel={openModal} footer={null}>
       <TitleDiv>
         <div>새로운 계정 만들기</div>
         <span>간단합니다</span>
       </TitleDiv>
       <FormWrapper>
-        <Form onFinish={onSubmit}  form={form} size="large">
+        <Form onFinish={onSubmit} layout="horizontal" form={form} size="large">
           <FirstName rules={[{ required: true }]}>
             <Input
               value={firstName}
@@ -108,16 +121,18 @@ const Signup = ({ isModal, openModal }) => {
             />
           </SecondName>
           <MaleFemale>
-            <Select placeholder="성별" onchange={onChangeGender}>
-              <Option value={gender}>여성</Option>
-              <Option value={gender}>남성</Option>
+            <Select placeholder="성별" onChange={onChangeSex}>
+              <Option value="여">여성</Option>
+              <Option value="남">남성</Option>
             </Select>
           </MaleFemale>
+          {/* 여기까지 */}
+
           <Form.Item rules={[{ required: true }]}>
             <Input
               value={email}
               onChange={onChangeEmail}
-              placeholder="휴대폰 번호 또는 이메일"
+              placeholder="이메일"
             />
           </Form.Item>
           <Form.Item rules={[{ required: true }]}>
@@ -130,19 +145,19 @@ const Signup = ({ isModal, openModal }) => {
           <SmallTitle>생일</SmallTitle>
           <SpaceWrapper>
             <DatePicker
-              placeholder="년도"
-              // onChange={onchange}
               picker="year"
-              value={birthday}
+              onChange={onChangeBirth}
+              placeholder="년도"
             />
-            <Select defaultValue="월">
+
+            <Select name="month" placeholder="월" onChange={onChangeMonth}>
               {months.map((month, index) => (
-                <Option key={index}>{month}</Option>
+                <Option key={`${index + 1}`}>{month}</Option>
               ))}
             </Select>
-            <Select defaultValue="일">
+            <Select name="day" placeholder="일" onChange={onChangeDay}>
               {days.map((day, index) => (
-                <Option key={index}>{day}</Option>
+                <Option key={`${index + 1}`}>{day}</Option>
               ))}
             </Select>
           </SpaceWrapper>
@@ -160,19 +175,19 @@ const Signup = ({ isModal, openModal }) => {
 
 export default Signup;
 
-const BtnWrapper = styled.div`
-  // display: flex;
-  // justify-content: start;
-  // margin-top: 10px;
+// const BtnWrapper = styled.div` 제거하기
+//   // display: flex;
+//   // justify-content: start;
+//   // margin-top: 10px;
 
-  .ant-radio-wrapper {
-    height: 38px;
-    line-height: 38px;
-    padding: 0 5px;
-    border: 1px solid #ccd0d5;
-    border-radius: 5px;
-  }
-`;
+//   .ant-radio-wrapper {
+//     height: 38px;
+//     line-height: 38px;
+//     padding: 0 5px;
+//     border: 1px solid #ccd0d5;
+//     border-radius: 5px;
+//   }
+// `;
 
 const SmallTitle = styled.div`
   display: flex;
@@ -180,10 +195,11 @@ const SmallTitle = styled.div`
   padding-left: 3px;
 `;
 
-const SmallSecondTitle = styled(SmallTitle)`
-  margin-top: 10px;
-`;
+// const SmallSecondTitle = styled(SmallTitle)` 제거
+//   margin-top: 10px;
+// `;
 
+// 추가하기
 const SpaceWrapper = styled(Space)`
   .ant-picker {
     width: 132px;
@@ -211,7 +227,7 @@ const FormWrapper = styled.div`
   // max-width: 500px;
   padding: 16px;
 
-  // & Button {
+  // & Button { 제거
   //   width: 100%;
   //   background: #1890ff;
   //   color: #fff;
@@ -264,18 +280,18 @@ const FormWrapper = styled.div`
 
 const FirstName = styled(Form.Item)`
   display: inline-block;
-  width: 153px;
+  width: 154px;
 `;
 
 const SecondName = styled(FirstName)`
-  margin-left: 10px;
+  margin-left: 8px;
 `;
 
 const MaleFemale = styled(SecondName)`
   width: 74px;
 
   .ant-select-single {
-    width: 74px;
+    width: 75px;
     border-radius: 5px;
     // color: rgba(0, 0, 0, 0.4);
   }
@@ -318,5 +334,10 @@ const ModalWrapper = styled(Modal)`
 
   .ant-modal-body {
     padding: 0;
+  }
+
+  .ant-input-affix-wrapper {
+    // 추가하기
+    border-radius: 5px;
   }
 `;

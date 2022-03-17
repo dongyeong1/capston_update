@@ -1,19 +1,41 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback,useEffect } from "react";
 import { Layout, Card, Form, Input, Button, Modal } from "antd";
 import Signup from "./SignUpTest";
 import styled from "styled-components";
 import Link from "next/link";
 import useInput from "../hooks/useInput";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import Router from 'next/router'
+import { useDispatch ,useSelector} from "react-redux";
 import { LOGIN_REQUEST } from "../reducers/user";
+
+import { signIn, signOut, useSession } from "next-auth/react"; // 소셜로그인
+import GoogleButton from "react-google-button"; // google 버튼
+import { LOAD_POSTS_REQUEST } from "../reducers/post";
 
 const { Header, Footer, Content } = Layout;
 const { Meta } = Card;
 
 const signin = () => {
+  const dispatch = useDispatch();
 
-    const dispatch=useDispatch()
+  const {me} =useSelector((state)=>state.user)
+
+  useEffect(()=>{
+      if(me.user){
+          dispatch({
+              type:LOAD_POSTS_REQUEST
+          })
+          console.log('dongss')
+          
+         Router.push(
+             '/'
+         )
+      }
+  },[me.user])
+
+  const { data: session } = useSession(); // 소셜 로그인
+
   const [form] = Form.useForm();
 
   const [isModal, setIsModal] = useState(false);
@@ -39,11 +61,9 @@ const signin = () => {
     console.log(body);
 
     dispatch({
-        type:LOGIN_REQUEST,
-        data:body
-    })
-
-    
+      type: LOGIN_REQUEST,
+      data: body,
+    });
   };
 
   return (
@@ -55,11 +75,7 @@ const signin = () => {
             <Meta title="Runnable 로그인" />
           </MetaDiv>
           <FormDiv>
-            <FormWrapper
-              onFinish={onSubmit}
-              form={form}
-              size="large"
-            >
+            <FormWrapper onFinish={onSubmit} form={form} size="large">
               <Form.Item>
                 <Input
                   value={id}
@@ -76,11 +92,34 @@ const signin = () => {
                   required
                 />
               </Form.Item>
-              <Form.Item>
+              {/* 코드추가 */}
+              <BtnDiv>
+                <LineDiv>
+                  <button
+                    type="button"
+                    className="line_btn"
+                    onClick={() => {
+                      signIn("line");
+                    }}
+                  >
+                    <img src="btn_base.png" />
+                    LINE으로 시작하기
+                  </button>
+                </LineDiv>
+                <GoogleDiv>
+                  <GooBtn
+                    type="light"
+                    label="Google로 시작하기"
+                    onClick={() => {
+                      signIn("google");
+                    }}
+                  />
+                </GoogleDiv>
                 <Button type="default" htmlType="submit">
                   Signin
                 </Button>
-              </Form.Item>
+              </BtnDiv>
+              {/*  */}
             </FormWrapper>
           </FormDiv>
           <QuestionDiv>
@@ -109,6 +148,8 @@ signin.getLayout = function getLayout(page) {
 };
 
 export default signin;
+
+// FormDiv 밑에 추가코드있음
 
 const SignupBtn = styled.div`
   display: inline-block;
@@ -204,6 +245,73 @@ const FormDiv = styled.div`
     color: #fff;
   }
 `;
+
+// 코드추가
+const BtnDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const LineDiv = styled.div`
+  // 라인 로그인
+  // align-items: center;
+  position: relative;
+
+  img {
+    position: absolute;
+    left: 5px;
+    color: #fff;
+  }
+
+  .line_btn {
+    width: 100%;
+    height: 50px;
+    line-height: 40px;
+    background: #06c755;
+    color: #fff;
+    border: 1px solid #e5e5e5;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .line_btn:hover {
+    // background: #000 (opacity: 30%);
+    background: #06c755;
+    // opacity: 0.2;
+    // color: #fff;
+    border: 1px solid #e5e5e5;
+  }
+
+  .line_btn:focus {
+    background: #06c755;
+    // opacity: 0.3;
+    color: #fff;
+    border: 1px solid #e5e5e5;
+  }
+`;
+
+const GooBtn = styled(GoogleButton)`
+  width: 347px !important;
+  border-radius: 0 !important;
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%) !important;
+  font-family: "Nunito Sans", sans-serif !important;
+  margin: 0 !important;
+  text-align: center !important;
+  font-size: 15px !important;
+  line-height: 51px !important;
+
+  span {
+    padding-right: 40px !important;
+  }
+`;
+
+const GoogleDiv = styled.div`
+  // 구글 로그인
+  position: relative;
+  display: inline-block;
+  width: 350px;
+`;
+// 여기까지
 
 const CardStyle = styled(Card)`
   width: 400px;
