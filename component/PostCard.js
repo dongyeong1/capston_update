@@ -1,28 +1,35 @@
-import React, { useState, useCallback } from 'react';
-import { Card, Button, Avatar, Popover,Row,Col, List, Comment } from 'antd';
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useCallback } from "react";
+import {
+  Card,
+  Button,
+  Avatar,
+  Popover,
+  Descriptions,
+  List,
+  Comment,
+} from "antd";
+import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
 
-import { RetweetOutlined, HeartTwoTone, HeartOutlined, MessageOutlined, EllipsisOutlined ,CommentOutlined,StepForwardOutlined } from '@ant-design/icons';
-import styled from 'styled-components';
-import Link from 'next/link';
+import {
+  RetweetOutlined,
+  HeartTwoTone,
+  HeartOutlined,
+  MessageOutlined,
+  EllipsisOutlined,
+  CommentOutlined,
+  StepForwardOutlined,
+  TrophyTwoTone, // 추가한것
+  TrophyOutlined, // 추가한것
+} from "@ant-design/icons";
+import styled from "styled-components";
+import Link from "next/link";
 
-import CommentForm from './CommentForm';
+import CommentForm from "./CommentForm";
 // import PostCardContent from './PostCardContent';
 // import PostImages from './PostImages';
-import FollowButton from './FollowButton';
+import FollowButton from "./FollowButton";
 
-const dummyComments = [{
-  User: {
-    nickname: 'nero',
-  },
-  content: '우와 개정판이 나왔군요~',
-}, {
-  User: {
-    nickname: 'hero',
-  },
-  content: '얼른 사고싶어요~',
-}];
 
 const CardWrapper = styled.div`
   margin-bottom: 20px;
@@ -120,6 +127,8 @@ const PostCard = ({post}) => {
         <>
           <CommentForm post={post} />
           <List
+          rowKey={()=>post.id}
+          // key={post.id}
           style={{width:500,marginLeft:100}}
             header={`${post.comment.length} 댓글`}
             itemLayout="horizontal"
@@ -127,13 +136,14 @@ const PostCard = ({post}) => {
             renderItem={(item) => (
               <li>
                 <Comment
-                  author={item.user.name}
-                  avatar={(
-                    // <Link href={{ pathname: '/user', query: { id: item.User.id } }} as={`/user/${item.User.id}`}>
+                // key={item.id}
+                  author={item.name}
+                  // avatar={(
+                  //   // <Link href={{ pathname: '/user', query: { id: item.User.id } }} as={`/user/${item.User.id}`}>
                       
-                    // </Link>
-                    <a><Avatar>{item.user.name[0]}</Avatar></a>
-                  )}
+                  //   // </Link>
+                  //   // <a><Avatar>{item.name[0]}</Avatar></a>
+                  // )}
                   content={item.content}
                 />
               </li>

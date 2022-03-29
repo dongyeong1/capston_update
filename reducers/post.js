@@ -140,89 +140,24 @@ export const initialState={
 // },
 
 // ],
-mainPosts:[
-  {
-    
-        id: 6,
-        User: {
-          id: 6,
-          nickname: '세준',
-        },
-        content: '여섯번째 게시글',
-        Images: [{
-          src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
-        }, {
-          src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
-        }, {
-          src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
-        }],
-        Comments:[]
-      
-    
-    },
-    {
-    
-          id: 2,
-          User: {
-            id: 2,
-            nickname: '재현',
-          },
-          content: '두 번째 게시글',
-          Images: [{
-            src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
-          }, {
-            src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
-          }, {
-            src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
-          }],
-          Comments:[{
-              User:{
-                id:1,
-                nickname:'현종'
-              },
-              content:'안녕'
-            } ]
-        
-      
-      }
-      ,
-      {
-          
-          id: 3,
-          User: {
-            id: 3,
-            nickname: '현종',
-          },
-          content: '세번째 게시글',
-          Images: [{
-            src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
-          }, {
-            src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
-          }, {
-            src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
-          }],
-          Comments:[{
-              User:{
-                id:1,
-                nickname:'동영'
-              },
-              content:'안녕'
-            } ]
-        
-      
-      },
-],
+mainPosts:[],
    addCommentDone:false,
    addCommentLoading:false,
    addCommentError:false,
    loadPostsLoading: false,
    loadPostsDone: false,
    loadPostsError: null,
+   loadsPostsLoading: false,
+   loadsPostsDone: false,
+   loadsPostsError: null,
    addPostLoading:false,
    addPostDone:false,
    hasMorePosts:true
 }
 
+export const LOADS_POSTS_REQUEST = 'LOADS_POSTS_REQUEST';
+export const LOADS_POSTS_SUCCESS = 'LOADS_POSTS_SUCCESS';
+export const LOADS_POSTS_FAILURE = 'LOADS_POSTS_FAILURE';
 
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
@@ -314,6 +249,24 @@ const reducer=(state=initialState,action)=>{
                     draft.loadPostsLoading = false; 
                     draft.loadPostsError = "ㅇㅇㅇ";
                     break;
+
+                    case LOADS_POSTS_REQUEST:
+                      draft.loadsPostsLoading = true;
+                      draft.loadsPostsDone = false;
+                      draft.loadsPostsError = null;
+                      break;
+                      case LOADS_POSTS_SUCCESS:
+                        
+                      draft.loadsPostsLoading = false;
+                      draft.loadsPostsDone = true;
+
+                      draft.mainPosts=action.data
+                      break;
+                      case LOADS_POSTS_FAILURE:
+                      draft.loadsPostsLoading = false; 
+                      draft.loadsPostsError = "ㅇㅇㅇ";
+                      break;
+
                     case ADD_COMMENT_REQUEST:
                     draft.addCommentLoading = true;
                     draft.addCommentDone = false;
@@ -322,17 +275,11 @@ const reducer=(state=initialState,action)=>{
                     draft.addCommentLoading = false;
                     draft.addCommentDone = true;
 
-                    const commentpost=draft.mainPosts.find((v)=>v.id===action.data.postId)
-                    commentpost.Comments.unshift({
-                        User:{
-                            id:action.data.userId,
-                            nickname:action.data.nickname
-                          },
-                        content:action.data.content
-                    })
-
-                    
-                    // draft.mainPosts=draft.mainPosts
+                    const commentpost=draft.mainPosts.find((v)=>v.id===action.data.id)
+                    commentpost.comment.unshift(action.data.result.comment)
+                    // draft.mainPosts.find((v)=>v.id===action.data.id)
+                  
+                    draft.mainPosts=draft.mainPosts
                     break;
                     case ADD_COMMENT_FAILURE:
                     draft.addCommentLoading = false; 

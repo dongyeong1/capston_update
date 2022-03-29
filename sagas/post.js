@@ -1,7 +1,7 @@
 
 import { all,call,fork,put,takeLatest, take} from 'redux-saga/effects'
 
-import { ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS, LOAD_POSTS_FAILURE, LOAD_POSTS_SUCCESS,LOAD_POSTS_REQUEST,ADD_COMMENT_REQUEST,ADD_COMMENT_FAILURE,ADD_COMMENT_SUCCESS} from '../reducers/post'
+import { ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS, LOAD_POSTS_FAILURE, LOAD_POSTS_SUCCESS,LOAD_POSTS_REQUEST,ADD_COMMENT_REQUEST,ADD_COMMENT_FAILURE,ADD_COMMENT_SUCCESS,LOADS_POSTS_FAILURE,LOADS_POSTS_SUCCESS,LOADS_POSTS_REQUEST} from '../reducers/post'
 import axios from 'axios'
 
 function addPostAPI(data){
@@ -55,17 +55,90 @@ function* loadPosts(action){
     }
 }
 
-function addCommentAPI(data){
-    // return axios.post('/loadPosts',data)
+const loadsPostsAPI =async()=>{
+    try{
+        const res= await fetch("https://2yubi.shop/api/post/index", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            
+          });
+          const data= await res.json()
+
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
+    }
+    
+
+function* loadsPosts(action){
+    try{
+        const result = yield call(loadsPostsAPI)
+        console.log('dongresultss',result)
+        yield put({
+            type:LOADS_POSTS_SUCCESS,
+            data:result.data
+        })
+
+    }catch(err){
+        yield put({
+            type:LOADS_POSTS_FAILURE,
+            error:'xx',
+             
+        })
+
+    }
+}
+
+
+const addCommentAPI=async(datas)=>{
+
+    try{
+        
+        const res= await fetch(`https://2yubi.shop/api/comment/store/${datas.postId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              content:datas.contents.content
+             
+        }),
+          });
+          const data= await res.json()
+        
+      
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
+
+    
+
+    
+    // return axios.post(`https://2yubi.shop/api/comment/store/${data.postId}`,data.contents)
     }
     
 
 function* addComment(action){
     try{
-        // const result = yield call(addCommentAPI,action.data)
+        const result=yield call(addCommentAPI,action.data)
+        console.log('commentresult',result)
         yield put({
             type:ADD_COMMENT_SUCCESS,
-            data:action.data
+            data:{
+                id:action.data.postId,
+                result
+
+            }
         })
 
     }catch(err){
@@ -90,6 +163,9 @@ function* watchLoadPosts(){
 function* watchAddComment(){
     yield takeLatest(ADD_COMMENT_REQUEST,addComment)
 }
+function* watchLoadsPosts(){
+    yield takeLatest(LOADS_POSTS_REQUEST,loadsPosts)
+}
 
 export default function* rootSaga(){
 
@@ -97,6 +173,7 @@ export default function* rootSaga(){
         fork(watchAddPost),
         fork(watchLoadPosts),
         fork(watchAddComment),
+        fork(watchLoadsPosts),
         
       
     ])

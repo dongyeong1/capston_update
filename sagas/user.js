@@ -3,27 +3,15 @@ import { all,call,fork,put,takeLatest, take} from 'redux-saga/effects'
 import {LOGIN_FAIL, LOGIN_REQUEST,LOGIN_SUCCESS,LOGOUT_REQUEST, 
     LOGOUT_SUCCESS,LOGOUT_FAIL, SIGNUP_REQUEST,SIGNUP_SUCCESS,SIGNUP_FAIL,
     FOLLOWING_SUCCESS,FOLLOWING_REQUEST,FOLLOWING_FAIL,UNFOLLOWING_REQUEST,
-    UNFOLLOWING_SUCCESS,UNFOLLOWING_FAIL, LOAD_LOGIN_REQUEST, LOAD_LOGIN_SUCCESS, LOAD_LOGIN_FAILURE, LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE} from '../reducers/user'
+    UNFOLLOWING_SUCCESS,UNFOLLOWING_FAIL, LOAD_LOGIN_REQUEST, LOAD_LOGIN_SUCCESS, LOAD_LOGIN_FAILURE, LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE, USER_SEARCH_REQUEST, USER_SEARCH_SUCCESS, USER_SEARCH_FAILURE} from '../reducers/user'
 import axios from 'axios'
 import { FaCookie } from 'react-icons/fa';
 import cookie from 'react-cookies'
 import { setCookie, getCookie, removeCookie } from 'react-cookies'
 import { withCookies, Cookies } from 'react-cookie';
+import  Router  from 'next/router';
 
 var cookies=new Cookies()
-
-// function logInAPI(data){
-//     let config={
-//         headers:{
-//             'Content-Type': 'application/json',
-//             Accept:"application/json"
-//         }
-      
-       
-//     }
-
-//     return axios.post('https://2yubi.shop/api/login',data)
-// }
 
 
 
@@ -44,13 +32,11 @@ const logInAPI=async(datas)=>{
         }),
           });
           const data= await res.json()
-        //   axios.defaults.headers.common['x-access-token']=data.message
-        cookie.save('login_token',data.login_token, {
+       
+        cookie.save('login_token',data.access_token, {
             path: "/",
           });
-        //   cookie.save("refreshToken", refreshToken, {
-        //     path: "/",
-        //   });
+       
           return data
 
     }catch(err){
@@ -63,7 +49,7 @@ function* login(action){
 
 try{
     const result =yield call(logInAPI,action.data)
-console.log('userResult',result.headers)
+console.log('userResult',result)
 yield put({
     type:LOGIN_SUCCESS,
     data:result
@@ -77,8 +63,32 @@ yield put({
 } 
 
 
-function logOutAPI(data){
-    return axios.post('http://3.35.239.14/api/logout')
+const logOutAPI=async(data)=>{
+    // return axios.post('https://2yubi.shop/api/logout')
+
+    try{
+        const res= await fetch("https://2yubi.shop/api/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+           
+       
+          });
+          const data= await res.json()
+       
+        cookie.remove('login_token', {
+            path: "/",
+          });
+          
+       
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
 }
 
 function* logout(){
@@ -118,8 +128,26 @@ function* signup(action){
 }
 
 
-function followAPI(data){
-    return axios.post(`http://3.35.239.14/api/follow/${data.id}`)
+const followAPI=async(datas)=>{
+    // return axios.post(`http://3.35.239.14/api/follow/${data.id}`)
+    try{
+        const res= await fetch(`https://2yubi.shop/api/follow/${datas.id}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+           
+          });
+          const data= await res.json()
+      
+       
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
     }
     
     function* following(action){
@@ -141,8 +169,26 @@ function followAPI(data){
     }
 
 
-    function unfollowAPI(data){
-        return axios.post(`http://3.35.239.14/api/follow/${data}`)
+    const unfollowAPI=async(datas)=>{
+        // return axios.post(`http://3.35.239.14/api/follow/${data}`)
+        try{
+            const res= await fetch(`https://2yubi.shop/api/follow/${datas}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                },
+                credentials: "include",
+               
+              });
+              const data= await res.json()
+          
+           
+              return data
+    
+        }catch(err){
+            console.log(err)
+        }
         }
         
         function* unfollowing(action){
@@ -165,27 +211,60 @@ function followAPI(data){
 
 
 
-        // const logInAPI=async(datas)=>{
-        //     try{
-        //         const res= await fetch("https://2yubi.shop/api/login", {
-        //             method: "POST",
-        //             headers: {
-        //               "Content-Type": "application/json",
-        //               Accept: "application/json",
-        //             },
-        //             credentials: "include",
-        //             body: JSON.stringify({
-        //               email:datas.email,
-        //               password:datas.password,
-        //             }),
-        //           });
-        //           const data= await res.json()
-        //           return data
         
-        //     }catch(err){
-        //         console.log(err)
-        //     }
-        // }
+  
+
+const loadLoginAPI=async()=>{
+
+    try{
+        const res= await fetch("https://2yubi.shop/api/user", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+           
+          });
+          const data= await res.json()
+       
+      
+       
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
+
+
+
+
+    
+
+
+}
+
+    function* loadLogin(action){
+    
+        try{
+            
+            const result=yield call(loadLoginAPI)
+            
+            
+              yield put({
+                  type:LOAD_LOGIN_SUCCESS,
+                  data:result
+              })
+          }catch(err){
+              yield put({
+                  type:LOAD_LOGIN_FAILURE,
+                  error:err.response.data,
+                   
+              })
+          }
+    }
+    
+      
         
 
 
@@ -195,12 +274,8 @@ function followAPI(data){
 
 
 const loadUserInfoAPI=async()=>{
-    
-        // const res= await fetch("https://2yubi.shop/api/user", {
-        //     headers: { "Content-Type": "application/json" },
-        //     credentials: "include",
-        //   })
-    // console.log('axiosstart',axios.defaults)
+    console.log('dosin',axios.defaults.headers)
+
         const res=await axios.get('https://2yubi.shop/api/user')
    
           
@@ -216,7 +291,6 @@ const loadUserInfoAPI=async()=>{
         function* loadUserInfo(action){
         
             try{
-                console.log('byeongsin',axios.defaults.headers)
                 const result=yield call(loadUserInfoAPI)
                 console.log('로그인로드됨')
                 console.log('zxctqwe',result)
@@ -233,8 +307,68 @@ const loadUserInfoAPI=async()=>{
                   })
               }
         }
+        ////////
+
+        const userSearchAPI=async(datas)=>{
+
+
+
+            try{
+                const res= await fetch('https://2yubi.shop/api/userSearch', {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Accept: "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        keyword:datas,
+                       
+                  }),
+                  });
+                  const data= await res.json()
+              
+               
+                  return data
         
+            }catch(err){
+                console.log(err)
+            }
+
+
+
+
+
+
+        
+       
+              
+              
+        
+             
     
+       
+    }
+    
+            function* userSearch(action){
+            
+                try{
+                    const result=yield call(userSearchAPI,action.data)
+                    console.log('userSearchresult',result)
+                    
+                      yield put({
+                          type:USER_SEARCH_SUCCESS,
+                          data:result
+                      })
+                  }catch(err){
+                      yield put({
+                          type:USER_SEARCH_FAILURE,
+                          error:err.response.data,
+                           
+                      })
+                  }
+            }
+            
     
     
 
@@ -256,24 +390,29 @@ function* watchFollowing(){
 function* watchUnFollowing(){
     yield takeLatest(UNFOLLOWING_REQUEST,unfollowing)
 }
-// function* watchLoadLogin(){
-//     yield takeLatest(LOAD_LOGIN_REQUEST,loadLogin)
-// }
+function* watchLoadLogin(){
+    yield takeLatest(LOAD_LOGIN_REQUEST,loadLogin)
+}
 
 function* watchUserInfo(){
     yield takeLatest(LOAD_MY_INFO_REQUEST,loadUserInfo)
 }
+function* watchUserSearch(){
+    yield takeLatest(USER_SEARCH_REQUEST,userSearch)
+}
+
 
 export default function* rootSaga(){
 
     yield all([
-        // fork(watchLoadLogin),
+        fork(watchLoadLogin),
         fork(watchLogin),
         fork(watchLogout),
         fork(watchSignup),
         fork(watchFollowing),
         fork(watchUnFollowing),
         fork(watchUserInfo),
+        fork(watchUserSearch)
     ])
 
 }

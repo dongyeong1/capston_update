@@ -6,36 +6,42 @@ import { useSelector } from "react-redux";
 const UserForm = () => {
   const {me}=useSelector((state)=>state.user)
   return (
-    <CardWrapper
-      bordered={true}
-      actions={[
-        <div key="followings">
-          팔로잉
-          <br />{me.followings.length}
-        </div>,
-        <div key="followings">
-          팔로워
-          <br />{me.followers.length}
-        </div>,
-        <div key="twit">
-          게시물
-          <br />{me.posts.length}
-        </div>,
-      ]}
-    >
-      <CardMetaWrapper
-        avatar={
-          <Avatar size={52} style={{ background: "#00a2ae" }}>
-            Image
-          </Avatar>
-        }
-        style={{}}
-      />
-      <div>{me.name}</div>
-      <Global />
-    </CardWrapper>
+    <Container>
+   {me&&<CardWrapper
+  bordered={true}
+  actions={[
+    
+    <div key="followings">
+      팔로잉
+      <br />{me.followings.length}
+    </div>,
+    <div key="followings">
+      팔로워
+      <br />{me.followers.length}
+    </div>,
+    <div key="twit">
+      게시물
+      <br />{me.posts.length}
+    </div>,
+  ]}
+>
+  <CardMetaWrapper
+    avatar={
+      <Avatar size={52} style={{ background: "#00a2ae" }}>
+        Image
+      </Avatar>
+    }
+    style={{}}
+  />
+  <div>{me.name}</div>
+  <Global />
+</CardWrapper>} 
+  </Container>
   );
 };
+const Container = styled.div`
+  height: 220px;
+`;
 
 const CardMetaWrapper = styled(Card.Meta)`
   height: 60px;
@@ -44,6 +50,7 @@ const CardMetaWrapper = styled(Card.Meta)`
     width: 100%;
     text-align: center;
     padding: 0;
+  }
 `;
 
 const DescriptionWrapper = styled(Descriptions)`
@@ -60,6 +67,11 @@ const CardWrapper = styled(Card)`
   .ant-card-actions li {
     overflow: hidden;
   }
+
+  div {
+    text-align: center;
+    // padding-top: 3px;
+  }
 `;
 
 const Global = createGlobalStyle`
@@ -75,3 +87,9 @@ const Global = createGlobalStyle`
 `;
 
 export default UserForm;
+
+
+
+
+
+

@@ -30,7 +30,7 @@ LOAD_MY_LOCATION_FAILURE
 
 function searchMapAPI(data){
     // 13.124.24.179/api/track/search?bounds=128.4642505645752&bounds=35.8402903083385&bounds=128.5250186920166&bounds=128.5250186920166&zoom=16&event=B
-    return axios.get(`http://13.124.24.179/api/track/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
     // return axios.get(`http://13.124.24.179/api/track/search?bounds=128.4642505645752&bounds=35.8402903083385&bounds=128.5250186920166&bounds=128.5250186920166&zoom=16&event=B`)
     }
     
@@ -55,7 +55,7 @@ function* searchMap(action){
 
 
 function loadMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/track/${data}/rank`)
+    return axios.get(`http://13.124.24.179/api/tracks/${data}/ranks`)
     }
     
 
@@ -79,7 +79,7 @@ function* loadMap(action){
 }
 
 function movingMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/track/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
     }
     
 
@@ -101,7 +101,7 @@ function* movingMap(action){
 }
 
 function runningMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/track/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)    }
+    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)    }
     
 
 function* runningMap(action){
@@ -123,7 +123,7 @@ function* runningMap(action){
 
 
 function bikeMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/track/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
     }
     
 
@@ -172,7 +172,7 @@ function* createmapLoad(action){
 
 function addTrackAPI(data){
     console.log('jong',data)
-    return axios.post(`http://13.124.24.179/api/track`,data) 
+    return axios.post(`http://13.124.24.179/api/tracks`,data) 
    }
 
 
@@ -195,7 +195,7 @@ function* addTrack(action){
 
 
 function myLocationAPI(data){
-    return axios.get(`http://13.124.24.179/api/track/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
 }
    
 

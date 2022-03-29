@@ -11,7 +11,9 @@ import { LOGIN_REQUEST } from "../reducers/user";
 
 import { signIn, signOut, useSession } from "next-auth/react"; // 소셜로그인
 import GoogleButton from "react-google-button"; // google 버튼
-import { LOAD_POSTS_REQUEST } from "../reducers/post";
+import { LOADS_POSTS_REQUEST } from "../reducers/post";
+import wrapper from '../store/configureStore';
+import { END } from 'redux-saga';
 
 const { Header, Footer, Content } = Layout;
 const { Meta } = Card;
@@ -21,18 +23,31 @@ const signin = () => {
 
   const {me} =useSelector((state)=>state.user)
 
-  useEffect(()=>{
-      if(me.user){
-          dispatch({
-              type:LOAD_POSTS_REQUEST
-          })
-          console.log('dongss')
-          
-         Router.push(
-             '/'
-         )
-      }
-  },[me.user])
+//   useEffect(()=>{
+//     if(me.user !=null){
+//       Router.push(
+//         '/'
+//     )
+
+//     dispatch({
+//      type:LOADS_POSTS_REQUEST
+//  })
+
+//     }
+    
+//   },[me.user])
+
+//logout했을때 아직me가 null이아니라서 다시 /로 router.push된다
+useEffect(()=>{
+  if(me!=null){
+    Router.push(
+      '/'
+    )
+    dispatch({
+      type:LOADS_POSTS_REQUEST
+    })
+  }
+},[me])
 
   const { data: session } = useSession(); // 소셜 로그인
 
@@ -52,7 +67,7 @@ const signin = () => {
   const [id, onChangeId] = useInput("");
   const [password, onChangePassword] = useInput("");
 
-  const onSubmit = () => {
+  const onSubmit = async() => {
     let body = {
       email: id,
       password: password,
@@ -60,10 +75,14 @@ const signin = () => {
 
     console.log(body);
 
-    dispatch({
-      type: LOGIN_REQUEST,
-      data: body,
-    });
+    const result = await dispatch({
+        type: LOGIN_REQUEST,
+        data: body,
+      });
+
+    
+
+    
   };
 
   return (
@@ -146,6 +165,24 @@ const signin = () => {
 signin.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
+
+
+// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+//   const cookie = context.req ? context.req.headers.cookie : '';
+//   axios.defaults.headers.Cookie = '';
+//   if (context.req && cookie) {
+//     axios.defaults.headers.Cookie = cookie;
+//   }
+
+//   // context.store.dispatch({
+//   //     type:LOAD_POSTS_REQUEST
+//   // })
+
+//     context.store.dispatch(END);
+//     await context.store.sagaTask.toPromise();
+// })
+
+
 
 export default signin;
 

@@ -16,8 +16,11 @@ import {
 } from "antd";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import Link from "next/link";
-import axios from "axios";
 import moment from "moment";
+import axios from 'axios'
+import {LOAD_MY_INFO_REQUEST} from '../reducers/user'
+import { END } from 'redux-saga';
+import wrapper from '../store/configureStore';
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -274,6 +277,34 @@ const dashboard = () => {
     </Container>
   );
 };
+
+
+
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+   
+
+  console.log('ssssrssssssssss')
+  
+
+
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+   context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST
+    });
+
+
+
+
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();
+})
+
+
 
 export default dashboard;
 /*

@@ -3,14 +3,37 @@ import Link from "next/link";
 import styled, { createGlobalStyle } from "styled-components";
 import UserForm from "./UserForm";
 import MenuMenu from "./Menu";
+import Router from 'next/router'
 
 import { signOut, useSession } from "next-auth/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { LOGOUT_REQUEST, SIGNUP_REQUEST } from "../../reducers/user";
 
 const { Sider } = Layout;
 const { Meta } = Card;
+const push=()=>{
+}
 
 const SideBar = ({ isSide, showSide }) => {
+  const dispatch=useDispatch()
+  const logout=()=>{
+    Router.push('/Logoutlogin')
+    dispatch({
+      type:LOGOUT_REQUEST
+    })
+    
+
+
+    // setTimeout(()=>{
+    //   push()
+      
+    //   console.log('aaaaaadd')
+
+    // },3000)
+
+
+
+  }
   const { data: session } = useSession(); // 소셜로그인
   const { me } = useSelector((state) => state.user);
 
@@ -52,7 +75,7 @@ const SideBar = ({ isSide, showSide }) => {
           </SpaceDiv>
         ) : (
           <SpaceDiv>
-            <Avatar size={44} src={me.profile} />
+            <Avatar size={44}  />
           </SpaceDiv>
         )
       ) : (
@@ -62,8 +85,15 @@ const SideBar = ({ isSide, showSide }) => {
 
       {!isSide ? (
         <LogoutBtn>
-          {session && (
+          {session ? (
             <button onClick={() => signOut()}>
+              <img src="logout.png" /> 로그아웃
+            </button>
+          ) : (
+            // <Link href={'/LoginTest'}>
+            //   <a><img src="logout.png" /> 로그아웃</a>
+            // </Link>
+            <button onClick={logout}>
               <img src="logout.png" /> 로그아웃
             </button>
           )}

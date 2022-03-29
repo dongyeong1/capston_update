@@ -1,322 +1,297 @@
-import React, {useState,useEffect} from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { Polyline ,Marker,StreetViewPanorama,MarkerClusterer} from '@react-google-maps/api';
-import { InfoWindow } from '@react-google-maps/api';
-import Router from 'next/router'
-import {LOAD_MAP_REQUEST} from '../../reducers/map'
-import { MOVING_MAP_REQUEST,BIKE_MAP_REQUEST,RUNNING_MAP_REQUEST,SEARCH_MAP_REQUEST,LOAD_MY_LOCATION_REQUEST } from '../../reducers/map';
-import {Input,Button,Row,Col,Card,Pagination} from 'antd'
-import GeomHandle from '../GoogleMap'
-import SearchList from '../SearchList';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import {
+  Polyline,
+  Marker,
+  StreetViewPanorama,
+  MarkerClusterer,
+} from "@react-google-maps/api";
+import { InfoWindow } from "@react-google-maps/api";
+import Router from "next/router";
+import { LOAD_MAP_REQUEST } from "../../reducers/map";
+import {
+  MOVING_MAP_REQUEST,
+  BIKE_MAP_REQUEST,
+  RUNNING_MAP_REQUEST,
+  SEARCH_MAP_REQUEST,
+  LOAD_MY_LOCATION_REQUEST,
+} from "../../reducers/map";
+import { Input, Button, Row, Col, Card, Pagination } from "antd";
+import GeomHandle from "../GoogleMap";
+import SearchList from "../SearchList";
+import Link from "next/link";
 import styled from "styled-components";
-import wrapper from '../../store/configureStore';
+import wrapper from "../../store/configureStore";
 import { SearchOutlined } from "@ant-design/icons";
 
-
-
-
-  var lat=1
-  var lng=2
-
+var lat = 1;
+var lng = 2;
 
 function selectMap({}) {
-    const {myLocation}=useSelector((state)=>state.map)
+  useEffect(()=>{
+    console.log('mememememe',me)
+  },[])
+  const { myLocation } = useSelector((state) => state.map);
 
-    const [geom ,setGeom]=useState()
-    const { Search } = Input;
+  const {me}=useSelector((state)=>state.user)
+  const [geom, setGeom] = useState();
+  const { Search } = Input;
 
+  const [loadMap, setLoadMap] = useState(false);
 
-    const [loadMap,setLoadMap]=useState(false)
-
-    function getLocation() {
-        if (navigator.geolocation) { // GPS를 지원하면
-          navigator.geolocation.getCurrentPosition(function(position) {
-             
-            setGeom({
-                lat:position.coords.latitude,
-                lng:position.coords.longitude
-            })
-            setLoadMap(true)
-
-           
-          }, function(error) {
-            console.error(error);
-          }, {
-            enableHighAccuracy: false,
-            maximumAge: 0,
-            timeout: Infinity
+  function getLocation() {
+    if (navigator.geolocation) {
+      // GPS를 지원하면
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          setGeom({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
           });
-        } else {
-          alert('GPS를 지원하지 않습니다');
+          setLoadMap(true);
+        },
+        function (error) {
+          console.error(error);
+        },
+        {
+          enableHighAccuracy: false,
+          maximumAge: 0,
+          timeout: Infinity,
         }
-      }
-
-   
-   
-
-    const [isState,setIsState]=useState(false)
-    const [mapState,setMapState]= useState('B')
-
-   
-    const dispatch=useDispatch()
-
-    // const mapContainerStyle = {
-    // marginTop:60,
-    // height: "720px",
-    // width: "1000px"
-    // };
-    const mapContainerStyle = {
-        // Google Map 스타일
-        width: "100%",
-        height: "80vh",
-        borderRadius: "15px",
-        padding: "0 30px",
-      };
-
-    const {searchMap}=useSelector((state)=>state.map)
-
-    // const [geom ,setGeom]=useState({lat:35.969997373905, lng: 128.45170755523503})
-    const [mapref, setMapRef] = useState(null);
-
-    useEffect(()=>{
-        getLocation()
-        if(mapref){
-            dispatch({
-                type:LOAD_MY_LOCATION_REQUEST,
-                data:{
-                    north:{
-                      lat:mapref.getBounds().getNorthEast().lat(),
-                      lng:mapref.getBounds().getNorthEast().lng()
-                    },
-                    south:{
-                      lat:mapref.getBounds().getSouthWest().lat(),
-                      lng:mapref.getBounds().getSouthWest().lng()
-                    },
-                    event:mapState
-          
-                  }
-            })
-        }
-      
-    },[loadMap])
-
-
-    const handleOnLoad = map => {
-        setMapRef(map);
-        console.log('load됨')
-      };
-
-      const handleCenterChanged = () => {
-    
-        dispatch({ 
-          type:MOVING_MAP_REQUEST,
-          data:{
-            north:{
-                lat:mapref.getBounds().getNorthEast().lat(),
-                lng:mapref.getBounds().getNorthEast().lng()
-              },
-              south:{
-                lat:mapref.getBounds().getSouthWest().lat(),
-                lng:mapref.getBounds().getSouthWest().lng()
-              },
-            event:mapState
-  
-          }
-        })
-      
-      }
-
-      //////markercluseter
-
-
-    const optionss = {
-        imagePath:
-        'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', // so you must have m1.png, m2.png, m3.png, m4.png, m5.png and m6.png in that folder
+      );
+    } else {
+      alert("GPS를 지원하지 않습니다");
     }
+  }
 
+  const [isState, setIsState] = useState(false);
+  const [mapState, setMapState] = useState("B");
 
-    function createKey(location) {
-        return location.lat + location.lng
-    }
+  const dispatch = useDispatch();
 
-      //////markercluseter
+  // const mapContainerStyle = {
+  // marginTop:60,
+  // height: "720px",
+  // width: "1000px"
+  // };
+  const mapContainerStyle = {
+    // Google Map 스타일
+    width: "88%",
+    height: "85vh",
+    // margin: "0 5%",
+    borderRadius: "15px",
+    position: "relative",
+    left: "8%",
+  };
 
+  const { searchMap } = useSelector((state) => state.map);
 
-   ///주소검색
+  // const [geom ,setGeom]=useState({lat:35.969997373905, lng: 128.45170755523503})
+  const [mapref, setMapRef] = useState(null);
 
-    const {searchmapLoading}=useSelector((state)=>state.map)
-
-
-
-   const handleButton = async() => {
-       const currentAddr = document.getElementById('address').value
-       if (currentAddr){
-         const {lat, lng} = await GeomHandle(currentAddr)
-         setGeom({lat:lat,lng:lng})
-
-         dispatch({
-           type:SEARCH_MAP_REQUEST,
-           data:{
-            north:{
-              lat:mapref.getBounds().getNorthEast().lat(),
-              lng:mapref.getBounds().getNorthEast().lng()
-            },
-            south:{
-              lat:mapref.getBounds().getSouthWest().lat(),
-              lng:mapref.getBounds().getSouthWest().lng()
-            },
-            event:mapState
-  
-          }
-       })
-       console.log('aaa',searchMap)
-
-
-
-      
-       }
-     }
-
-
-   //주소검색
-
-
-
-      //polyline
-
-    //   const [propsPosition,setPropsPosition]=useState()
-
-      const [propsId,setPropsId]=useState()
-
-
-      const [infoPosition,setInfoPosition]=useState({
-        lat:'',
-        lng:'',
-        })
-    
-      const [target,setTarget]=useState(false)
-
-
-      const [strokeWeight,setStrokeWeight]=useState(Array.from({length: searchMap.length}, () => 3))
-      const strokeWeights= Array.from({length: searchMap.length}, () => 3);
-
-
-      const polylineClick=(positionData)=>{
-     
-    
-        setInfoPosition({
-            lat:positionData.gps.coordinates[3][1],
-            lng:positionData.gps.coordinates[3][0]
-        })
-        console.log('qqq',positionData)
-        setPropsId(positionData._id)
-        // setPropsPosition(positionData)
-        setTarget(true)
-        
-    }
-    
-
-    function mouseOver(index){
-        strokeWeights[index]=10
-        setStrokeWeight(strokeWeights)
-    }
-
-    function mouseOut(index){
-        strokeWeights[index]=3
-        setStrokeWeight(strokeWeights)
-
-    }
-
-      //polyline
-
-      //infoWindow
-      const closeClick=()=>{
-        setTarget(false)
-    }
-
-
-
-    const divStyle = {
-        background: `white`,
-        border: `1px solid #ccc`,
-        padding: 15
-    }
-
-
-  const oneRoute=()=>{
-    dispatch({
-               type:LOAD_MAP_REQUEST,
-               data:propsId
-             })
-               
-    Router.push({
-        pathname: '/Route/[id]',
-        query: {id:propsId},
+  useEffect(() => {
+    getLocation();
+    if (mapref) {
+      dispatch({
+        type: LOAD_MY_LOCATION_REQUEST,
+        data: {
+          north: {
+            lat: mapref.getBounds().getNorthEast().lat(),
+            lng: mapref.getBounds().getNorthEast().lng(),
+          },
+          south: {
+            lat: mapref.getBounds().getSouthWest().lat(),
+            lng: mapref.getBounds().getSouthWest().lng(),
+          },
+          event: mapState,
+        },
       });
-
-      console.log('dong',searchMap)
-}
-
-
-      //infoWindow
-
-    //   const [mapState,setMapState]=useState()
-    // const {mapState}=useSelector((state)=>state.map)
-    const bikeSelectMap=()=>{
-        setMapState('B')
-        setIsState(true)
     }
+  }, [loadMap]);
 
-    const runningSelectMap=()=>{
-        setMapState('R')
-        setIsState(true)
+  const handleOnLoad = (map) => {
+    setMapRef(map);
+    console.log("load됨");
+  };
+
+  const handleCenterChanged = () => {
+    dispatch({
+      type: MOVING_MAP_REQUEST,
+      data: {
+        north: {
+          lat: mapref.getBounds().getNorthEast().lat(),
+          lng: mapref.getBounds().getNorthEast().lng(),
+        },
+        south: {
+          lat: mapref.getBounds().getSouthWest().lat(),
+          lng: mapref.getBounds().getSouthWest().lng(),
+        },
+        event: mapState,
+      },
+    });
+  };
+
+  //////markercluseter
+
+  const optionss = {
+    imagePath:
+      "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m", // so you must have m1.png, m2.png, m3.png, m4.png, m5.png and m6.png in that folder
+  };
+
+  function createKey(location) {
+    return location.lat + location.lng;
+  }
+
+  //////markercluseter
+
+  ///주소검색
+
+  const { searchmapLoading } = useSelector((state) => state.map);
+
+  const handleButton = async () => {
+    const currentAddr = document.getElementById("address").value;
+    if (currentAddr) {
+      const { lat, lng } = await GeomHandle(currentAddr);
+      setGeom({ lat: lat, lng: lng });
+
+      dispatch({
+        type: SEARCH_MAP_REQUEST,
+        data: {
+          north: {
+            lat: mapref.getBounds().getNorthEast().lat(),
+            lng: mapref.getBounds().getNorthEast().lng(),
+          },
+          south: {
+            lat: mapref.getBounds().getSouthWest().lat(),
+            lng: mapref.getBounds().getSouthWest().lng(),
+          },
+          event: mapState,
+        },
+      });
+      console.log("aaa", searchMap);
     }
-   
-    useEffect(()=>{
+  };
 
-        if(mapState==='B'&&isState===true){
-            dispatch({
-                type:BIKE_MAP_REQUEST,
-                data:{
-                    event:mapState,
-                    north:{
-                        lat:mapref.getBounds().getNorthEast().lat(),
-                        lng:mapref.getBounds().getNorthEast().lng()
-                      },
-                      south:{
-                        lat:mapref.getBounds().getSouthWest().lat(),
-                        lng:mapref.getBounds().getSouthWest().lng()
-                      },  
-                }
-            })
-            setIsState(false)
-        }else if(mapState==='R'&&isState===true){
-            dispatch({
-                type:RUNNING_MAP_REQUEST,
-                data:{
-                    event:mapState,
-                    north:{
-                        lat:mapref.getBounds().getNorthEast().lat(),
-                        lng:mapref.getBounds().getNorthEast().lng()
-                      },
-                      south:{
-                        lat:mapref.getBounds().getSouthWest().lat(),
-                        lng:mapref.getBounds().getSouthWest().lng()
-                      },
-                }
-            })
-            setIsState(false)
+  //주소검색
 
-        }
-    },[mapState,isState])
+  //polyline
 
+  //   const [propsPosition,setPropsPosition]=useState()
 
+  const [propsId, setPropsId] = useState();
 
-  
-    
+  const [infoPosition, setInfoPosition] = useState({
+    lat: "",
+    lng: "",
+  });
 
+  const [target, setTarget] = useState(false);
+
+  const [strokeWeight, setStrokeWeight] = useState(
+    Array.from({ length: searchMap.length }, () => 3)
+  );
+  const strokeWeights = Array.from({ length: searchMap.length }, () => 3);
+
+  const polylineClick = (positionData) => {
+    setInfoPosition({
+      lat: positionData.gps.coordinates[3][1],
+      lng: positionData.gps.coordinates[3][0],
+    });
+    console.log("qqq", positionData);
+    setPropsId(positionData._id);
+    // setPropsPosition(positionData)
+    setTarget(true);
+  };
+
+  function mouseOver(index) {
+    strokeWeights[index] = 10;
+    setStrokeWeight(strokeWeights);
+  }
+
+  function mouseOut(index) {
+    strokeWeights[index] = 3;
+    setStrokeWeight(strokeWeights);
+  }
+
+  //polyline
+
+  //infoWindow
+  const closeClick = () => {
+    setTarget(false);
+  };
+
+  const divStyle = {
+    background: `white`,
+    border: `1px solid #ccc`,
+    padding: 15,
+  };
+
+  const oneRoute = () => {
+    dispatch({
+      type: LOAD_MAP_REQUEST,
+      data: propsId,
+    });
+
+    Router.push({
+      pathname: "/Route/[id]",
+      query: { id: propsId,userId:me.id},
+    });
+
+    console.log("dong", searchMap);
+  };
+
+  //infoWindow
+
+  //   const [mapState,setMapState]=useState()
+  // const {mapState}=useSelector((state)=>state.map)
+  const bikeSelectMap = () => {
+    setMapState("B");
+    setIsState(true);
+  };
+
+  const runningSelectMap = () => {
+    setMapState("R");
+    setIsState(true);
+  };
+
+  useEffect(() => {
+    if (mapState === "B" && isState === true) {
+      dispatch({
+        type: BIKE_MAP_REQUEST,
+        data: {
+          event: mapState,
+          north: {
+            lat: mapref.getBounds().getNorthEast().lat(),
+            lng: mapref.getBounds().getNorthEast().lng(),
+          },
+          south: {
+            lat: mapref.getBounds().getSouthWest().lat(),
+            lng: mapref.getBounds().getSouthWest().lng(),
+          },
+        },
+      });
+      setIsState(false);
+    } else if (mapState === "R" && isState === true) {
+      dispatch({
+        type: RUNNING_MAP_REQUEST,
+        data: {
+          event: mapState,
+          north: {
+            lat: mapref.getBounds().getNorthEast().lat(),
+            lng: mapref.getBounds().getNorthEast().lng(),
+          },
+          south: {
+            lat: mapref.getBounds().getSouthWest().lat(),
+            lng: mapref.getBounds().getSouthWest().lng(),
+          },
+        },
+      });
+      setIsState(false);
+    }
+  }, [mapState, isState]);
+
+  const [btn, setBtn] = useState(false);
 
   return (
     <Container>
@@ -324,7 +299,8 @@ function selectMap({}) {
         <Row>
           <Col span={12}>
             <LeftDiv>
-              <div style={{ height: "25%" }}>
+              <Title>코스찾기</Title>
+              <div>
                 <Search
                   loading={searchmapLoading}
                   onPressEnter={handleButton}
@@ -336,30 +312,34 @@ function selectMap({}) {
                   size="large"
                 />
                 <Buttons>
-                  <Button onClick={bikeSelectMap}>자전거</Button>
-                  <Button onClick={runningSelectMap}>달리기</Button>
+                  <Button className="btn1" onClick={bikeSelectMap}>
+                    자전거
+                  </Button>
+                  <Button className="btn2" onClick={runningSelectMap}>
+                    달리기
+                  </Button>
                 </Buttons>
-                <p>코스찾기</p>
               </div>
-              <RowDiv gutter={[0, 16]}>
-                {searchMap.map((p, index) => (
-                  <Col span={24}>
-                    <SearchList
-                      setInfoPosition={setInfoPosition}
-                      setPropsId={setPropsId}
-                      setTarget={setTarget}
-                      index={index}
-                      setStrokeWeight={setStrokeWeight}
-                      list={p}
-                      key={p.id}
-                    ></SearchList>
-                  </Col>
-                ))}
-              </RowDiv>
+              {/* <RowDiv gutter={[0, 16]}> */}
+              {searchMap.map((p, index) => (
+                // <Col span={24}>
+                <SearchList
+                  setInfoPosition={setInfoPosition}
+                  setPropsId={setPropsId}
+                  setTarget={setTarget}
+                  index={index}
+                  setStrokeWeight={setStrokeWeight}
+                  list={p}
+                  key={p.id}
+                ></SearchList>
+                // </Col>
+              ))}
+              {/* </RowDiv> */}
               <Page
                 defaultCurrent={1}
                 defaultPageSize={3}
-                total={searchMap.lenth}
+                // total={searchMap.lenth}
+                total={10}
                 // onChange={onChangePage}
               />
             </LeftDiv>
@@ -432,40 +412,34 @@ function selectMap({}) {
         </Row>
       </CardDiv>
     </Container>
-  )
+  );
 }
 
+export default selectMap;
 
-
-
-export default selectMap
-
-export const getStaticProps=wrapper.getStaticProps(async (context)=>{
- 
-    context.store.dispatch({
-            type:LOAD_MY_LOCATION_REQUEST,
-            data:{
-                north:{
-                  lat:mapref.getBounds().getNorthEast().lat(),
-                  lng:mapref.getBounds().getNorthEast().lng()
-                },
-                south:{
-                  lat:mapref.getBounds().getSouthWest().lat(),
-                  lng:mapref.getBounds().getSouthWest().lng()
-                },
-                event:mapState
-      
-              }
-        })
-    context.store.dispatch(END)
-    await context.store.sagaTask.toPromise()
-
-})
-
+export const getStaticProps = wrapper.getStaticProps(async (context) => {
+  context.store.dispatch({
+    type: LOAD_MY_LOCATION_REQUEST,
+    data: {
+      north: {
+        lat: mapref.getBounds().getNorthEast().lat(),
+        lng: mapref.getBounds().getNorthEast().lng(),
+      },
+      south: {
+        lat: mapref.getBounds().getSouthWest().lat(),
+        lng: mapref.getBounds().getSouthWest().lng(),
+      },
+      event: mapState,
+    },
+  });
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
 
 const Container = styled.div`
   // 전체 div
   width: 100%;
+  // height: 100%;
 
   .ant-input {
     border-radius: 15px;
@@ -494,6 +468,13 @@ const Container = styled.div`
     // border-top-right-radius: 9px !important;
     // border-bottom-right-radius: 9px !important;
   }
+
+  .ant-card {
+    width: 100%;
+    border-radius: 9px;
+    box-shadow: 0 1px 2px -2px rgb(0 0 0 / 16%), 0 3px 6px 0 rgb(0 0 0 / 12%);
+    margin: 0;
+  }
 `;
 
 const mapContainerStyle = {
@@ -504,29 +485,39 @@ const mapContainerStyle = {
   padding: "0 30px",
 };
 
-const CardDiv = styled(Card)`
+export const CardDiv = styled(Card)`
   width: 100%;
 
   border-radius: 15px;
   box-shadow: 0 1px 2px -2px rgb(0 0 0 / 16%), 0 3px 6px 0 rgb(0 0 0 / 12%);
+
+  .ant-card-body {
+    padding: 10px;
+  }
 `;
 
 // const RightDiv = styled.div``;
 
 const LeftDiv = styled.div`
   display: inline-block;
+  position: relative;
   width: 100%;
   height: 100%;
   padding: 0 5%;
+`;
 
-  p {
-    font-size: 30px;
-    font-weight: bold;
-    margin: 30px auto;
-  }
+export const Title = styled.p`
+  font-size: 30px;
+  font-weight: bold;
+  margin: 20px auto;
+  margin-top: 0;
 `;
 
 const Page = styled(Pagination)`
+  position: absolute;
+  left: 34%;
+  bottom: 1%;
+  margin-top: 32px;
   text-align: center;
 `;
 
@@ -534,6 +525,7 @@ const Buttons = styled.div`
   display: inline-block;
   width: 90%;
   width: 100%;
+  margin-bottom: 20px;
 
   Button {
     height: 33px;
@@ -556,10 +548,7 @@ const Buttons = styled.div`
 const RowDiv = styled(Row)`
   display: inline-block;
   width: 100%;
-  height: 65%;
-  border: 1px solid grey;
+  height: 75%;
+  // border: 1px solid grey;
   padding-bottom: 30px;
 `;
-
-
-

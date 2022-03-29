@@ -7,12 +7,13 @@ import { FOLLOWING_REQUEST,UNFOLLOWING_REQUEST } from '../reducers/user';
 function FollowButton({post}) {
 
 
+
   const dispatch=useDispatch();
   const {me, follower} = useSelector((state)=>state.user)
 
   
   
-  const isFollowing=me.user.followings.find((v)=>v.id===post.User.id)
+  const isFollowing=me.followings.find((v)=>v.id===post.id)
  
    
 
@@ -20,13 +21,13 @@ function FollowButton({post}) {
       if(isFollowing){
         dispatch({
           type:UNFOLLOWING_REQUEST,
-          data:post.user.id
+          data:post.id
         })
       }else{
         
         dispatch({
           type:FOLLOWING_REQUEST,
-          data:{id:post.user.id,name:post.user.name}
+          data:{id:post.id,name:post.name}
         })
       }
     }

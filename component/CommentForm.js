@@ -21,10 +21,12 @@ function CommetForm({post}) {
         dispatch({
             type:ADD_COMMENT_REQUEST,
             data: {
-                content:commentText,
+                contents:{
+                    'content':commentText,
+                },
                 postId:post.id,
-               userId:me.id,
-                nickname:me.nickname
+            //    userId:me.id,
+            //     nickname:me.nickname
                
             }
     

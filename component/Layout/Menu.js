@@ -22,11 +22,11 @@ const MenuMenu = () => {
       link: "/dashboard",
       icon: <UserOutlined />,
     },
-    {
-      title: "나의 라이딩 경로",
-      link: "/myData",
-      icon: <CompassOutlined />,
-    },
+    // {
+    //   title: "나의 라이딩 경로",
+    //   link: "/myData",
+    //   icon: <CompassOutlined />,
+    // },
     {
       title: "나의 운동목표",
       link: "/musclePurpose",
@@ -47,6 +47,11 @@ const MenuMenu = () => {
       link: "/setting",
       icon: <SettingOutlined />,
     },
+    {
+      title: "유저탐색",
+      link: "/userSearch",
+      icon: <CompassOutlined />,
+    },
   ];
 
   return (
@@ -54,7 +59,7 @@ const MenuMenu = () => {
       {category.map((menu, index) => (
         <Menu.Item key={index} icon={menu.icon}>
           <Link href={menu.link}>
-            <a>{menu.title}</a>
+           <a>{menu.title}</a>
           </Link>
         </Menu.Item>
       ))}

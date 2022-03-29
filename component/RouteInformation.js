@@ -1,51 +1,106 @@
-import React from 'react'
+import React from "react";
 
-
-import { Card,Avatar,Image } from 'antd';
-import RunningChart from './RunningChart';
-import BikeChart from './BikeChart'
-import { Tabs } from 'antd';
-import { AppleOutlined, AndroidOutlined } from '@ant-design/icons';
-import { FaRunning } from 'react-icons/fa';
-import { MdDirectionsBike } from 'react-icons/md';
-import { Affix, Button } from 'antd';
-import { useSelector } from 'react-redux';
-
+import { Card, Avatar, Image } from "antd";
+import RunningChart from "./RunningChart";
+import BikeChart from "./BikeChart";
+import { Tabs } from "antd";
+import { AppleOutlined, AndroidOutlined } from "@ant-design/icons";
+import { FaRunning } from "react-icons/fa";
+import { MdDirectionsBike } from "react-icons/md";
+import { Affix, Button } from "antd";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import Link from "next/link";
+import moment from "moment";
 
 function RouteInformation() {
-  const {loadMap}=useSelector((state)=>state.map)
+  const { loadMap } = useSelector((state) => state.map);
+
+  const dateFormat = (d) => {
+    let date = moment(d);
+    return date.format("YYYY년 MM월 DD일");
+  };
+
   return (
-  
-        <div >
-            <div style={{position:'fixed',marginTop:70,marginLeft:55}}>코스정보</div>
-             <Card 
-             
+    <Container>
+      <Card
+        title="내 기록"
+        extra={
+          <Link href="/myData">
+            <a>More</a>
+          </Link>
+        }
         hoverable
-        style={{ width: 340 ,marginLeft:50 ,marginTop:100,borderRadius:30,position:'fixed'}}
-        
+        style={{
+          width: "100%",
+        }}
         bordered
-       
       >
-        <div>
-         거리:{loadMap.track.totalDistance}km<br></br>
-         생성날짜:{loadMap.track.createdAt}<br></br>
-         설명:{loadMap.track.description}
-         </div>
-
-
-       
-    
-       
+        <DivWrapper>
+          <Avatar size={58}>서민성</Avatar>
+          <div>
+            <p>거리 : {loadMap.track.totalDistance}km</p>
+            <p>생성날짜 : {dateFormat(loadMap.track.createdAt)}</p>
+            <p>설명 : {loadMap.track.description}</p>
+          </div>
+        </DivWrapper>
       </Card>
-      
-      
-        </div>
-      )
-  
+    </Container>
+  );
 }
 
-export default RouteInformation
+export default RouteInformation;
 
+// const Container = styled.div`
+//   width: 100%;
 
+// `;
 
+const Container = styled.div`
+  width: 100%;
 
+  .ant-card {
+    width: 100%;
+    border-radius: 7px;
+    box-shadow: 0 1px 2px -2px rgb(0 0 0 / 16%), 0 3px 6px 0 rgb(0 0 0 / 12%);
+  }
+
+  .ant-card-head {
+    min-height: 45px;
+    line-height: 45px;
+    background: #1890ff;
+    font-size: 20px;
+    // font-weight: bold;
+    color: #fff;
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
+  }
+
+  .ant-card-body {
+    padding: 20px;
+    height: 120px;
+  }
+
+  .ant-card-head-title,
+  .ant-card-extra {
+    padding: 0;
+  }
+
+  a {
+    color: #fff;
+  }
+
+  p {
+    margin: 0;
+  }
+`;
+
+const DivWrapper = styled.div`
+  display: flex;
+  padding-top: 8px;
+
+  .ant-avatar {
+    margin-right: 20px;
+    // padding-top: 3px;
+  }
+`;

@@ -19,11 +19,6 @@
       "static/chunks/webpack.js",
       "static/chunks/pages/index.js"
     ],
-    "/LoginTest": [
-      "static/chunks/main.js",
-      "static/chunks/webpack.js",
-      "static/chunks/pages/LoginTest.js"
-    ],
     "/_app": [
       "static/chunks/main.js",
       "static/chunks/webpack.js",
@@ -33,6 +28,11 @@
       "static/chunks/main.js",
       "static/chunks/webpack.js",
       "static/chunks/pages/_error.js"
+    ],
+    "/myRecord": [
+      "static/chunks/main.js",
+      "static/chunks/webpack.js",
+      "static/chunks/pages/myRecord.js"
     ]
   },
   "ampFirstPages": []

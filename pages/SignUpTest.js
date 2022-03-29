@@ -81,13 +81,15 @@ const Signup = ({ isModal, openModal }) => {
 
   const onSubmit = () => {
     let body = {
-      name: firstName + lastName,
-      email: email,
-      password: password,
-      sex: sex,
-      weight: "100kg",
-      location: "대구",
-      birth: birth.birth + "-" + birth.month + "-" + birth.day,
+      name:firstName + lastName,
+      email:email,
+      password:password,
+      sex:sex,
+      profile:'img',
+      introduce:'가입',
+      weight:70,
+      location:"대구",
+      birth:birth.birth + "-" + birth.month + "-" + birth.day,
     };
 
     console.log(body);
