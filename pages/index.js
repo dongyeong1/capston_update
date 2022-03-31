@@ -10,7 +10,7 @@ import wrapper from '../store/configureStore';
 import PostCard from '../component/PostCard';
 import MyNote from '../component/MyNote';
 import styled from "styled-components";
-import {LOAD_POSTS_REQUEST} from '../reducers/post'
+import {LOAD_MORE_POST_REQUEST, LOAD_POSTS_REQUEST} from '../reducers/post'
 
 import Rank from '../component/Rank';
 import Goal from '../component/goal'
@@ -21,27 +21,30 @@ function index() {
 
     const {searchMap}=useSelector((state)=>state.map)
     const {me} =useSelector((state)=>state.user)
-    const {mainPosts,hasMorePosts,loadPostsLoading}=useSelector((state)=>state.post)
+    const {mainPosts,hasMorePosts,loadMorePostLoading}=useSelector((state)=>state.post)
     const dispatch=useDispatch()
   
 
 
 
-  // useEffect(()=>{
-  //   function onScroll(){
-  //       if(window.scrollY+document.documentElement.clientHeight>document.documentElement.scrollHeight-300){
-  //           if(hasMorePosts && !loadPostsLoading){
-  //               dispatch({
-  //                   type:LOAD_POSTS_REQUEST
-  //               })
-  //              }
-  //       }
-  //   }
-  //   window.addEventListener('scroll',onScroll)
-  //   return()=>{
-  //   window.removeEventListener('scroll',onScroll)    
-  //   }
-  //   },[hasMorePosts,loadPostsLoading])
+  useEffect(()=>{
+    function onScroll(){
+        if(window.scrollY+document.documentElement.clientHeight>document.documentElement.scrollHeight-300){
+            if(hasMorePosts && !loadMorePostLoading){
+              dispatch({
+                type:LOAD_MORE_POST_REQUEST,
+                data:mainPosts.nextPage
+              })
+
+
+               }
+        }
+    }
+    window.addEventListener('scroll',onScroll)
+    return()=>{
+    window.removeEventListener('scroll',onScroll)    
+    }
+    },[hasMorePosts,loadMorePostLoading])
  
 
 
@@ -58,7 +61,7 @@ function index() {
     </LeftDiv>
     <RightDiv>
       <PostDiv>
-        {mainPosts.map((post) => (
+        {mainPosts.data.map((post) => (
           <PostCard post={post} key={post.id} />
         ))}
       </PostDiv>
@@ -82,9 +85,8 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   context.store.dispatch({
       type:LOAD_POSTS_REQUEST
   })
-
-
-
+  console.log('getssr',new Date().toTimeString())
+  
     context.store.dispatch(END);
     await context.store.sagaTask.toPromise();
 })
@@ -120,7 +122,7 @@ const RightDiv = styled.div`
 
 const PostDiv = styled.div`
   // 무한스크롤
-  overflow: auto;
+  
   width: 100%;
   padding-left: 5px;
   height: 84.2vh;

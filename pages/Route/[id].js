@@ -10,13 +10,14 @@ import { LOAD_MAP_REQUEST } from "../../reducers/map";
 import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-import { Card, Table, Popover, Avatar, Timeline } from "antd";
+import { Card, Table,Button, Popover, Avatar, Timeline } from "antd";
 import styled from "styled-components";
 import moment from "moment";
 import { Title, CardDiv } from "../../component/map/selectMap";
 const { Column } = Table;
 import { useRouter } from "next/router";
 import RouteInformation from "../../component/RouteInformation";
+import {useParams} from 'react-router-dom'
 
 import {
   VerticalGridLines,
@@ -31,6 +32,7 @@ import "react-vis/dist/style.css";
 
 
 function oneRoute() {
+    const {userId}=useParams()
     const router = useRouter();
 
 
@@ -52,25 +54,38 @@ function oneRoute() {
 
     const dispatch = useDispatch();
     const [indexNumber,setIndexNumber]=useState('')
-    const myRank=[]
+    // const [myRank,setMyRank]=useState([{
+    //     _id:'',
+    //     createdAt:'',
+    //     speed:[],
+    //     total
+    // }])
+    // const []
+    const [myRank,setMyRank]=useState([])
+    // const myRank=[]
 
     useEffect(()=>{
-
+        console.log('zzzzzzzzzzzzzzzzzzzzz')
     },[])
 
-    useEffect(()=>{
-        console.log('qqqqqq',router.query.userId)
-        if(loadMap.rank){
-            for(var i=0; i<loadMap.rank.length; i++){
-                if(router.query.userId==loadMap.rank[i].user.userId){
-                    console.log('iiiiiii',i)
-                    setIndexNumber(i)
-                    myRank.push(loadMap.rank[indexNumber])
-                    break
-                }
-            }
-        }
-    },[])
+    // useEffect(()=>{
+    //     console.log('qqqqqq',router.query.userId)
+    //     console.log('use',userId)
+    //     if(loadMap.rank){
+    //         for(var i=0; i<loadMap.rank.length; i++){
+    //             if(router.query.userId==loadMap.rank[i].user.userId){
+    //                 console.log('iiiiiii',i)
+    //                 setIndexNumber(i)
+    //                 console.log('load',loadMap.rank[i])
+    //                 setMyRank([loadMap.rank[i]])
+    //                 // myRank.push(loadMap.rank[i])
+    //         console.log('mymymy',myRank)
+                  
+    //                 break
+    //             }
+    //         }
+    //     }
+    // },[])
 
     // useEffect(()=>{
     //     myRank.push(loadMap.rank[indexNumber-1])
@@ -203,6 +218,7 @@ function oneRoute() {
   return (
     <>
       <Container>
+          
         <TitleText>{loadMap.track.trackName}</TitleText>
         <OverviewDiv>
           <div>
@@ -277,7 +293,7 @@ function oneRoute() {
                   <XAxis />
                   <YAxis />
                   <LineSeries data={loadMap.track.altitude} onNearestX={qq} />
-                  <Crosshair
+                  {/* <Crosshair
                     values={state.crosshairValue}
                     className={"test-class-name"}
                   >
@@ -289,7 +305,7 @@ function oneRoute() {
                         {index && state.crosshairValue[index].y}
                       </div>
                     </div>
-                  </Crosshair>
+                  </Crosshair> */}
                 </XYPlot>
               </CardDiv>
             </MouseDiv>
@@ -314,7 +330,7 @@ function oneRoute() {
                 </div>
               </TopCard>
 
-              {me === null
+              {/* {loadMap.rank === null
                 ? ""
                 : myRank.map((b, index) => (
                     <BottomCard>
@@ -345,7 +361,7 @@ function oneRoute() {
                         <span>{dateFormat(b.createdAt)}</span>
                       </div>
                     </BottomCard>
-                  ))}
+                  ))} */}
               {/* </CardWrapper> */}
             </div>
             {/* <Timeline>
@@ -361,7 +377,7 @@ function oneRoute() {
           </RightDiv>
         </TopDiv>
       </Container>
-      <RankDiv>
+      {/* <RankDiv>
         <Card>
           <Table
             dataSource={loadMap.rank}
@@ -398,24 +414,33 @@ function oneRoute() {
           </Table>
         </Card>
       </RankDiv>
+      <RankDiv>
+          <Card>
+          
+          </Card>
+
+      </RankDiv> */}
+     
     </>
   );
 }
 
-export async function getStaticPaths() {
-  const posts = await axios.get("http://13.124.24.179/api/tracks");
+// export async function getStaticPaths() {
+//   const posts = await axios.get("http://13.124.24.179/api/tracks");
 
-  var paths1 = posts.data.map((id) => ({
-    params: { id: id._id },
-  }));
+//   var paths1 = posts.data.map((id) => ({
+//     params: { id: id._id },
+//   }));
 
-  return {
-    paths: paths1,
-    fallback: false,
-  };
-}
+//   return {
+//     paths: paths1,
+//     fallback: false,
+//   };
+// }
 
-export const getStaticProps = wrapper.getStaticProps(async (context) => {
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+    // const { query } = context;
+    console.log('sqqssssssssss',context.query)
   context.store.dispatch({
     type: LOAD_MAP_REQUEST,
     data: context.params.id,

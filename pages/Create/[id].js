@@ -12,12 +12,13 @@ import { LOAD_LOGIN_REQUEST } from '../../reducers/user';
 
 
 function createPath() {
-    
+    const {createMap}=useSelector((state)=>state.map)
+
+    const [createDistance,setCreateDistance]=useState(createMap.distance[createMap.distance.length-1])
 
     const [trackName,onChangeTrackName]=useInput('');
     const [trackDescription,onChangeTrackDescription]=useInput('')
 
-    const {createMap}=useSelector((state)=>state.map)
 
     const [number,setNumber]=useState([0,createMap.gps.coordinates.length-1])
     const [twoPolyline,setTwoPolyline]=useState([createMap.gps.coordinates])
@@ -48,6 +49,7 @@ function createPath() {
             
               })
               setTwoPolyline([createMap.gps.coordinates.slice(number[0],number[1])])
+              setCreateDistance(createMap.distance[number[1]]-createMap.distance[number[0]])
               console.log('two',twoPolyline)
               console.log(number[0])
   
@@ -58,6 +60,7 @@ function createPath() {
               lng:createMap.gps.coordinates[number[1]][0]
           
             })
+            setCreateDistance(createMap.distance[number[1]]-createMap.distance[number[0]])
             setTwoPolyline([createMap.gps.coordinates.slice(number[0],number[1])])
             console.log('three',twoPolyline)
             console.log(number[1])
@@ -171,6 +174,10 @@ const mapContainerStyle = {
 <Row>
     <Col span={12}>
             <h1 style={{fontSize:40}}>경북대학교 한바퀴</h1>
+            <div
+            >
+                {createDistance}
+            </div>
         <div style={{marginLeft:40}}><Slider range defaultValue={number} max={createMap.gps.coordinates.length-1} onChange={change} /></div>
         
         <LoadScript
@@ -189,13 +196,13 @@ const mapContainerStyle = {
         <Marker position={leftPath} icon={{url:' http://maps.google.com/mapfiles/ms/icons/blue.png',}} ></Marker>
         <Marker position={rightPath} ></Marker>
     
-         <Polyline onDragStart={drag} onLoad={onLoad}  options={options} path={createMap.gps.coordinates.map((m)=>(
+         <Polyline   options={options} path={createMap.gps.coordinates.map((m)=>(
             {
                 lat:m[1],
                 lng:m[0]
             }
         ))}></Polyline> 
-        <Polyline onDragStart={drag} onLoad={onLoad}  options={options111} path={twoPolyline[0].map((m)=>(
+        <Polyline  options={options111} path={twoPolyline[0].map((m)=>(
             {
                 lat:m[1],
                 lng:m[0]

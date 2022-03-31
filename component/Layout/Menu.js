@@ -12,11 +12,7 @@ import Link from "next/link";
 
 const MenuMenu = () => {
   const category = [
-    {
-      title: "홈",
-      link: "/",
-      icon: <HomeOutlined />,
-    },
+   
     {
       title: "나의 프로필",
       link: "/dashboard",
@@ -56,9 +52,11 @@ const MenuMenu = () => {
 
   return (
     <MenuWrapper mode="inline">
+      <Menu.Item icon={<HomeOutlined />}><a href="/">홈</a></Menu.Item>
+      
       {category.map((menu, index) => (
         <Menu.Item key={index} icon={menu.icon}>
-          <Link href={menu.link}>
+          <Link href={menu.link} shallow >
            <a>{menu.title}</a>
           </Link>
         </Menu.Item>

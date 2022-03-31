@@ -26,11 +26,11 @@ export const initialState={
 //         },
 //         content:'안녕'
 //       } ]
-  
+
 
 // },
+
 // {
-    
 //     id: 2,
 //     User: {
 //       id: 2,
@@ -152,8 +152,16 @@ mainPosts:[],
    loadsPostsError: null,
    addPostLoading:false,
    addPostDone:false,
-   hasMorePosts:true
+   hasMorePosts:true,
+   loadMorePostLoading:false,
+   loadMorePostDone:false,
+   loadMorePostError:null
+
 }
+
+export const LOAD_MORE_POST_SUCCESS='LOAD_MORE_POST_SUCCESS'
+export const LOAD_MORE_POST_REQUEST='LOAD_MORE_POST_REQUEST'
+export const LOAD_MORE_POST_FAILURE='LOAD_MORE_POST_FAILURE'
 
 export const LOADS_POSTS_REQUEST = 'LOADS_POSTS_REQUEST';
 export const LOADS_POSTS_SUCCESS = 'LOADS_POSTS_SUCCESS';
@@ -240,15 +248,41 @@ const reducer=(state=initialState,action)=>{
                       
                     draft.loadPostsLoading = false;
                     draft.loadPostsDone = true;
-                    draft.hasMorePosts = draft.mainPosts.length < 50;
+                    // draft.hasMorePosts = draft.mainPosts.length < 50;
                     // draft.mainPosts = action.data.concat(draft.mainPosts);
                     //  백만들어지면 포스트 불러올것
+                    console.log('nexq',action.data.nextPage)
                     draft.mainPosts=action.data
                     break;
                     case LOAD_POSTS_FAILURE:
                     draft.loadPostsLoading = false; 
                     draft.loadPostsError = "ㅇㅇㅇ";
                     break;
+
+
+                    case LOAD_MORE_POST_REQUEST:
+                      draft.loadMorePostLoading = true;
+                      draft.loadMorePostDone = false;
+                      draft.loadMorePostError = null;
+                      break;
+                      case LOAD_MORE_POST_SUCCESS:
+                        
+                      draft.loadMorePostLoading = false;
+                      draft.loadMorePostDone = true;
+                      draft.hasMorePosts = draft.mainPosts.data.length < 30;
+                      // draft.mainPosts = action.data.concat(draft.mainPosts);
+                      //  백만들어지면 포스트 불러올것
+                      draft.mainPosts.nextPage=action.data.nextPage
+                      draft.mainPosts.data.push(...action.data.data)
+                      break;
+                      case LOAD_MORE_POST_FAILURE:
+                      draft.loadMorePostLoading = false; 
+                      draft.loadMorePostError = "ㅇㅇㅇ";
+                      break;
+
+
+
+
 
                     case LOADS_POSTS_REQUEST:
                       draft.loadsPostsLoading = true;

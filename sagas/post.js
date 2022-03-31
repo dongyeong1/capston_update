@@ -1,7 +1,7 @@
 
 import { all,call,fork,put,takeLatest, take} from 'redux-saga/effects'
 
-import { ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS, LOAD_POSTS_FAILURE, LOAD_POSTS_SUCCESS,LOAD_POSTS_REQUEST,ADD_COMMENT_REQUEST,ADD_COMMENT_FAILURE,ADD_COMMENT_SUCCESS,LOADS_POSTS_FAILURE,LOADS_POSTS_SUCCESS,LOADS_POSTS_REQUEST} from '../reducers/post'
+import { ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS, LOAD_POSTS_FAILURE, LOAD_POSTS_SUCCESS,LOAD_POSTS_REQUEST,ADD_COMMENT_REQUEST,ADD_COMMENT_FAILURE,ADD_COMMENT_SUCCESS,LOADS_POSTS_FAILURE,LOADS_POSTS_SUCCESS,LOADS_POSTS_REQUEST, LOAD_MORE_POST_REQUEST, LOAD_MORE_POST_SUCCESS, LOAD_MORE_POST_FAILURE} from '../reducers/post'
 import axios from 'axios'
 
 function addPostAPI(data){
@@ -32,6 +32,7 @@ const loadPostsAPI =async()=>{
     const res=await axios.get('https://2yubi.shop/api/post/index')
 
     const data=await res.data
+    console.log('jjjjjj',data)
     return data
     }
     
@@ -42,7 +43,12 @@ function* loadPosts(action){
         console.log('dongresultss',result)
         yield put({
             type:LOAD_POSTS_SUCCESS,
-            data:result.data
+            data:{
+data:result.data,
+nextPage:result.next_page_url
+            }
+                
+                
         })
 
     }catch(err){
@@ -54,6 +60,64 @@ function* loadPosts(action){
 
     }
 }
+
+
+
+
+
+const morePostAPI =async(datas)=>{
+   
+
+    const res= await fetch(`${datas}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include",
+        
+      });
+
+
+
+
+    
+
+      const data= await res.json()
+    console.log('pageResult',data)
+    return data
+    }
+    
+
+function* morePost(action){
+    try{
+        const result = yield call(morePostAPI,action.data)
+        console.log('dongresultss',result)
+        yield put({
+            type:LOAD_MORE_POST_SUCCESS,
+            data:{
+data:result.data,
+nextPage:result.next_page_url
+            }
+                
+                
+        })
+
+    }catch(err){
+        yield put({
+            type:LOAD_MORE_POST_FAILURE,
+            error:'xx',
+             
+        })
+
+    }
+}
+
+
+
+
+
+
 
 const loadsPostsAPI =async()=>{
     try{
@@ -76,13 +140,24 @@ const loadsPostsAPI =async()=>{
     }
     
 
+
+
+
+
+
+    
+
 function* loadsPosts(action){
     try{
         const result = yield call(loadsPostsAPI)
         console.log('dongresultss',result)
         yield put({
             type:LOADS_POSTS_SUCCESS,
-            data:result.data
+            data:{
+                data:result.data,
+                nextPage:result.next_page_url
+                            }
+                                
         })
 
     }catch(err){
@@ -94,6 +169,12 @@ function* loadsPosts(action){
 
     }
 }
+
+
+
+
+
+
 
 
 const addCommentAPI=async(datas)=>{
@@ -166,6 +247,9 @@ function* watchAddComment(){
 function* watchLoadsPosts(){
     yield takeLatest(LOADS_POSTS_REQUEST,loadsPosts)
 }
+function* watchLoadMorePost(){
+    yield takeLatest(LOAD_MORE_POST_REQUEST,morePost)
+}
 
 export default function* rootSaga(){
 
@@ -174,6 +258,7 @@ export default function* rootSaga(){
         fork(watchLoadPosts),
         fork(watchAddComment),
         fork(watchLoadsPosts),
+        fork(watchLoadMorePost),
         
       
     ])

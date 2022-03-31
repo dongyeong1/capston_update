@@ -19,6 +19,16 @@
       "static/chunks/webpack.js",
       "static/chunks/pages/index.js"
     ],
+    "/Create/[id]": [
+      "static/chunks/main.js",
+      "static/chunks/webpack.js",
+      "static/chunks/pages/Create/[id].js"
+    ],
+    "/Route/[id]": [
+      "static/chunks/main.js",
+      "static/chunks/webpack.js",
+      "static/chunks/pages/Route/[id].js"
+    ],
     "/_app": [
       "static/chunks/main.js",
       "static/chunks/webpack.js",
@@ -29,10 +39,10 @@
       "static/chunks/webpack.js",
       "static/chunks/pages/_error.js"
     ],
-    "/myRecord": [
+    "/polylineTest": [
       "static/chunks/main.js",
       "static/chunks/webpack.js",
-      "static/chunks/pages/myRecord.js"
+      "static/chunks/pages/polylineTest.js"
     ]
   },
   "ampFirstPages": []
