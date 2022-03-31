@@ -48,7 +48,7 @@ function createPath() {
                 lng:createMap.gps.coordinates[number[0]][0]
             
               })
-              setTwoPolyline([createMap.gps.coordinates.slice(number[0],number[1])])
+            setTwoPolyline([createMap.gps.coordinates.slice(number[0],number[1])])
               setCreateDistance(createMap.distance[number[1]]-createMap.distance[number[0]])
               console.log('two',twoPolyline)
               console.log(number[0])

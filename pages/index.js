@@ -66,7 +66,7 @@ function index() {
         ))}
       </PostDiv>
     </RightDiv>
-  </Container>
+</Container>
   )
 }
 
@@ -86,7 +86,7 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
       type:LOAD_POSTS_REQUEST
   })
   console.log('getssr',new Date().toTimeString())
-  
+
     context.store.dispatch(END);
     await context.store.sagaTask.toPromise();
 })
