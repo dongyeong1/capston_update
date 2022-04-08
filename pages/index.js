@@ -3,6 +3,7 @@ import { Menu, Button,Row,Col,Card} from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import LoginForm from '../component/LoginForm';
 
+
 import axios from 'axios'
 import {LOAD_MY_INFO_REQUEST} from '../reducers/user'
 import { END } from 'redux-saga';
@@ -11,14 +12,16 @@ import PostCard from '../component/PostCard';
 import MyNote from '../component/MyNote';
 import styled from "styled-components";
 import {LOAD_MORE_POST_REQUEST, LOAD_POSTS_REQUEST} from '../reducers/post'
-
+import {Modal} from 'antd'
 import Rank from '../component/Rank';
 import Goal from '../component/goal'
 
 
 function index() {
 
-
+useEffect(()=>{
+  Modal.destroyAll()
+})
     const {searchMap}=useSelector((state)=>state.map)
     const {me} =useSelector((state)=>state.user)
     const {mainPosts,hasMorePosts,loadMorePostLoading}=useSelector((state)=>state.post)
@@ -61,7 +64,8 @@ function index() {
     </LeftDiv>
     <RightDiv>
       <PostDiv>
-        {mainPosts.data.map((post) => (
+        
+        {mainPosts.length===0?<div>포스트없음</div>:mainPosts.data.map((post) => (
           <PostCard post={post} key={post.id} />
         ))}
       </PostDiv>

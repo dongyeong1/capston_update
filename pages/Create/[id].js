@@ -1,13 +1,14 @@
 import React,{useEffect,useState} from 'react'
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import { Polyline ,Marker,StreetViewPanorama,MarkerClusterer} from '@react-google-maps/api';
-import {Form,Card,Table,Button,Slider, Switch,Row,Col,Input} from 'antd'
+import {Form,Card,Table,Button,Slider, Switch,Row,Col,Input,Modal} from 'antd'
 import { useDispatch, useSelector } from 'react-redux';
 import { END } from 'redux-saga';
 import wrapper from '../../store/configureStore';
 import { ADD_TRACK_REQUEST, LOAD_CREATEMAP_REQUEST } from '../../reducers/map';
 import axios from 'axios';
 import useInput from '../../hooks/useInput';
+
 import { LOAD_LOGIN_REQUEST } from '../../reducers/user';
 
 
@@ -127,6 +128,12 @@ const mapContainerStyle = {
        
       }
 
+      const createSuccess=()=>{
+        Modal.success({
+          title:'경로만들기 성공'
+        })
+      }
+
     
     const storePath=[]
     const altitudes=[]
@@ -166,6 +173,9 @@ const mapContainerStyle = {
                 altitude:altitudes
             }
         })
+
+        createSuccess()
+        window.location.href='/myRecord'
       
     }
 
@@ -173,7 +183,7 @@ const mapContainerStyle = {
 <div>
 <Row>
     <Col span={12}>
-            <h1 style={{fontSize:40}}>경북대학교 한바퀴</h1>
+            <h1 style={{fontSize:40}}>경로만들기</h1>
             <div
             >
                 {createDistance}
@@ -187,7 +197,7 @@ const mapContainerStyle = {
       <GoogleMap
         id="marker-example"
         mapContainerStyle={mapContainerStyle}
-        zoom={14}
+        zoom={16}
         center={{
             lat: createMap.gps.coordinates[createMap.gps.coordinates.length%2][1],
             lng: createMap.gps.coordinates[createMap.gps.coordinates.length%2][0],

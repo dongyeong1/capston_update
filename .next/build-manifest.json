@@ -14,16 +14,6 @@
     "static/development/_ssgManifest.js"
   ],
   "pages": {
-    "/": [
-      "static/chunks/main.js",
-      "static/chunks/webpack.js",
-      "static/chunks/pages/index.js"
-    ],
-    "/Create/[id]": [
-      "static/chunks/main.js",
-      "static/chunks/webpack.js",
-      "static/chunks/pages/Create/[id].js"
-    ],
     "/Route/[id]": [
       "static/chunks/main.js",
       "static/chunks/webpack.js",
@@ -38,11 +28,6 @@
       "static/chunks/main.js",
       "static/chunks/webpack.js",
       "static/chunks/pages/_error.js"
-    ],
-    "/polylineTest": [
-      "static/chunks/main.js",
-      "static/chunks/webpack.js",
-      "static/chunks/pages/polylineTest.js"
     ]
   },
   "ampFirstPages": []

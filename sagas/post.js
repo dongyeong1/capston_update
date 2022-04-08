@@ -1,30 +1,10 @@
 
 import { all,call,fork,put,takeLatest, take} from 'redux-saga/effects'
 
-import { ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS, LOAD_POSTS_FAILURE, LOAD_POSTS_SUCCESS,LOAD_POSTS_REQUEST,ADD_COMMENT_REQUEST,ADD_COMMENT_FAILURE,ADD_COMMENT_SUCCESS,LOADS_POSTS_FAILURE,LOADS_POSTS_SUCCESS,LOADS_POSTS_REQUEST, LOAD_MORE_POST_REQUEST, LOAD_MORE_POST_SUCCESS, LOAD_MORE_POST_FAILURE} from '../reducers/post'
+import { LOAD_POSTS_FAILURE, LOAD_POSTS_SUCCESS,LOAD_POSTS_REQUEST,ADD_COMMENT_REQUEST,ADD_COMMENT_FAILURE,ADD_COMMENT_SUCCESS,LOADS_POSTS_FAILURE,LOADS_POSTS_SUCCESS,LOADS_POSTS_REQUEST, LOAD_MORE_POST_REQUEST, LOAD_MORE_POST_SUCCESS, LOAD_MORE_POST_FAILURE, DELETE_POST_REQUEST, DELETE_POST_SUCCESS, DELETE_POST_FAILURE} from '../reducers/post'
 import axios from 'axios'
 
-function addPostAPI(data){
-// return axios.post('/signup',data)
-}
 
-function* addPost(action){
-
-    try{
-        // const result=yield call(addPostAPI,action.data)
-        console.log('ddddddddd')
-          yield put({
-              type:ADD_POST_SUCCESS,
-              data:action.data
-          })
-      }catch(err){
-          yield put({
-              type:ADD_POST_FAILURE,
-              error:err.response.data,
-               
-          })
-      }
-}
 
 
 const loadPostsAPI =async()=>{
@@ -44,8 +24,8 @@ function* loadPosts(action){
         yield put({
             type:LOAD_POSTS_SUCCESS,
             data:{
-data:result.data,
-nextPage:result.next_page_url
+            data:result.data,
+            nextPage:result.next_page_url
             }
                 
                 
@@ -96,8 +76,8 @@ function* morePost(action){
         yield put({
             type:LOAD_MORE_POST_SUCCESS,
             data:{
-data:result.data,
-nextPage:result.next_page_url
+                data:result.data,
+                nextPage:result.next_page_url
             }
                 
                 
@@ -112,6 +92,10 @@ nextPage:result.next_page_url
 
     }
 }
+
+
+
+
 
 
 
@@ -137,14 +121,7 @@ const loadsPostsAPI =async()=>{
     }catch(err){
         console.log(err)
     }
-    }
-    
-
-
-
-
-
-
+}
     
 
 function* loadsPosts(action){
@@ -202,10 +179,6 @@ const addCommentAPI=async(datas)=>{
         console.log(err)
     }
 
-    
-
-    
-    // return axios.post(`https://2yubi.shop/api/comment/store/${data.postId}`,data.contents)
     }
     
 
@@ -234,9 +207,13 @@ function* addComment(action){
 
 
 
-function* watchAddPost(){
-    yield takeLatest(ADD_POST_REQUEST,addPost)
-}
+
+
+
+
+
+
+
 
 function* watchLoadPosts(){
     yield takeLatest(LOAD_POSTS_REQUEST,loadPosts)
@@ -251,15 +228,14 @@ function* watchLoadMorePost(){
     yield takeLatest(LOAD_MORE_POST_REQUEST,morePost)
 }
 
+
 export default function* rootSaga(){
 
     yield all([
-        fork(watchAddPost),
         fork(watchLoadPosts),
         fork(watchAddComment),
         fork(watchLoadsPosts),
         fork(watchLoadMorePost),
-        
       
     ])
 

@@ -9,7 +9,7 @@ import {
 } from "@react-google-maps/api";
 import { InfoWindow } from "@react-google-maps/api";
 import Router from "next/router";
-import { LOAD_MAP_REQUEST } from "../../reducers/map";
+import { LOAD_MAP_REQUEST, LOAD_TRACK_MYRANK_REQUEST, LOAD_TRACK_RANK_REQUEST } from "../../reducers/map";
 import {
   MOVING_MAP_REQUEST,
   BIKE_MAP_REQUEST,
@@ -228,17 +228,28 @@ function selectMap({}) {
   };
 
   const oneRoute = () => {
-    dispatch({
-      type: LOAD_MAP_REQUEST,
-      data: propsId,
-    });
+    window.location.href="/Route/"+propsId
+    // dispatch({
+    //   type: LOAD_MAP_REQUEST,
+    //   data: propsId,
+    // });
+    // dispatch({
+    //   type:LOAD_TRACK_MYRANK_REQUEST,
+    //   data: propsId,
+    // })
+    // dispatch({
+    //   type:LOAD_TRACK_RANK_REQUEST,
+    //   data:propsId,
+    // })
 
-    Router.push({
-      pathname: "/Route/[id]",
-      query: { id: propsId,userId:me.id},
-    });
+    // Router.push({
+    //   pathname: "/Route/[id]",
+    //   query: { id: propsId,
+    //     // userId:me.id
+    //   },
+    // });
 
-    console.log("dong", searchMap);
+    // console.log("dong", searchMap);
   };
 
   //infoWindow
@@ -397,11 +408,7 @@ function selectMap({}) {
                   <InfoWindow position={infoPosition} onCloseClick={closeClick}>
                     <div style={divStyle}>
                       <h1>동영</h1>
-                      {/* <Link href={{
-                        pathname:'/Route/[id]',
-                        query: {id:propsId},
-                    }}><a>상세보기</a></Link>
-                     */}
+                     
                       <button onClick={oneRoute}>상세보기</button>
                     </div>
                   </InfoWindow>

@@ -17,22 +17,10 @@ const push=()=>{
 const SideBar = ({ isSide, showSide }) => {
   const dispatch=useDispatch()
   const logout=()=>{
-    Router.push('/Logoutlogin')
     dispatch({
       type:LOGOUT_REQUEST
     })
-    
-
-
-    // setTimeout(()=>{
-    //   push()
-      
-    //   console.log('aaaaaadd')
-
-    // },3000)
-
-
-
+  
   }
   const { data: session } = useSession(); // 소셜로그인
   const { me } = useSelector((state) => state.user);

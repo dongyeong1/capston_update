@@ -39,9 +39,8 @@ function RouteInformation() {
         <DivWrapper>
           <Avatar size={58}>서민성</Avatar>
           <div>
-            <p>거리 : {loadMap.track.totalDistance}km</p>
-            <p>생성날짜 : {dateFormat(loadMap.track.createdAt)}</p>
-            <p>설명 : {loadMap.track.description}</p>
+            <p>생성날짜 : {dateFormat(loadMap.createdAt)}</p>
+            <p>설명 : {loadMap.description}</p>
           </div>
         </DivWrapper>
       </Card>

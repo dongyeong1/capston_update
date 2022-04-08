@@ -6,7 +6,7 @@ import {
   Polyline,
   Marker,
 } from "@react-google-maps/api";
-import { LOAD_MAP_REQUEST } from "../../reducers/map";
+import { LOAD_MAP_REQUEST, LOAD_TRACK_MYRANK_REQUEST,LOAD_TRACK_RANK_REQUEST, LOAD_TRACK_RANK_SUCCESS } from "../../reducers/map";
 import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
@@ -37,7 +37,7 @@ function oneRoute() {
 
 
 
-    const { loadMap, searchMap } = useSelector((state) => state.map);
+    const { loadMap, mapRank,myMapRank} = useSelector((state) => state.map);
     const {me}=useSelector((state)=>state.user)
 
     const [highAltitude,setHighAltitude]=useState('')
@@ -54,13 +54,7 @@ function oneRoute() {
 
     const dispatch = useDispatch();
     const [indexNumber,setIndexNumber]=useState('')
-    // const [myRank,setMyRank]=useState([{
-    //     _id:'',
-    //     createdAt:'',
-    //     speed:[],
-    //     total
-    // }])
-    // const []
+
     const [myRank,setMyRank]=useState([])
     // const myRank=[]
 
@@ -68,50 +62,25 @@ function oneRoute() {
         console.log('zzzzzzzzzzzzzzzzzzzzz')
     },[])
 
-    // useEffect(()=>{
-    //     console.log('qqqqqq',router.query.userId)
-    //     console.log('use',userId)
-    //     if(loadMap.rank){
-    //         for(var i=0; i<loadMap.rank.length; i++){
-    //             if(router.query.userId==loadMap.rank[i].user.userId){
-    //                 console.log('iiiiiii',i)
-    //                 setIndexNumber(i)
-    //                 console.log('load',loadMap.rank[i])
-    //                 setMyRank([loadMap.rank[i]])
-    //                 // myRank.push(loadMap.rank[i])
-    //         console.log('mymymy',myRank)
-                  
-    //                 break
-    //             }
-    //         }
-    //     }
-    // },[])
-
-    // useEffect(()=>{
-    //     myRank.push(loadMap.rank[indexNumber-1])
-    //     myRank.push(loadMap.rank[indexNumber])
-    //     myRank.push(loadMap.rank[indexNumber+1])
-   
-    //     console.log('myrankk',myRank)
-    // },[indexNumber])
+    
 
     useEffect(()=>{
         dispatch({
             type: LOAD_LOGIN_REQUEST
             });
         
-            for(var i=1; i<loadMap.track.altitude.length; i++){
-                setLowAltitude(loadMap.track.altitude[0].y)
-                setHighAltitude(loadMap.track.altitude[0].y)
+            for(var i=1; i<loadMap.altitude.length; i++){
+                setLowAltitude(loadMap.altitude[0].y)
+                setHighAltitude(loadMap.altitude[0].y)
 
 
               
 
-                if(lowAltitude>loadMap.track.altitude[i].y){
-                    setLowAltitude(loadMap.track.altitude[i].y)
+                if(lowAltitude>loadMap.altitude[i].y){
+                    setLowAltitude(loadMap.altitude[i].y)
                 }
-                if(highAltitude<loadMap.track.altitude[i].y){
-                    setHighAltitude(loadMap.track.altitude[i].y)
+                if(highAltitude<loadMap.altitude[i].y){
+                    setHighAltitude(loadMap.altitude[i].y)
                 }
             }
     },[])
@@ -169,44 +138,16 @@ function oneRoute() {
     console.log("aa", index);
     setIndex(index);
 
-    setState({ crosshairValue: loadMap.track.altitude.map((d) => d) });
+    setState({ crosshairValue: loadMap.altitude.map((d) => d) });
     setElevPath({
-      lat: loadMap.track.gps.coordinates[index][1],
-      lng: loadMap.track.gps.coordinates[index][0],
+      lat: loadMap.gps.coordinates[index][1],
+      lng: loadMap.gps.coordinates[index][0],
     });
     console.log("ha", state);
   };
   //elevmarker
 
-  const data = [
-    {
-      userId: 1,
-      userNickname: "새별",
-      rank: 1,
-      record: "02:52:11",
-      altitude: 4,
-      speed: 27,
-      date: "2022-03-02",
-    },
-    {
-      rank: 2,
-      userId: 2,
-      userNickname: "대영",
-      altitude: 12,
-      record: "02:55:32",
-      speed: 27,
-      date: "2022-03-04",
-    },
-    {
-      rank: 3,
-      userId: 3,
-      userNickname: "세준",
-      altitude: 11,
-      record: "02:58:06",
-      speed: 27,
-      date: "2022-03-05",
-    },
-  ];
+  
 
   const dateFormat = (d) => {
     let date = moment(d);
@@ -219,19 +160,11 @@ function oneRoute() {
     <>
       <Container>
           
-        <TitleText>{loadMap.track.trackName}</TitleText>
+        <TitleText>{loadMap.trackName}</TitleText>
         <OverviewDiv>
           <div>
             <div className="title">거리</div>
-            <div className="item">{loadMap.track.totalDistance}km</div>
-          </div>
-          <div>
-            <div className="title">소요 시간</div>
-            <div className="item">29분</div>
-          </div>
-          <div>
-            <div className="title">속도</div>
-            <div className="item">21.4km/h</div>
+            <div className="item">{loadMap.totalDistance}km</div>
           </div>
           <div>
             <div className="title">최고 고도</div>
@@ -252,14 +185,14 @@ function oneRoute() {
                     mapContainerStyle={mapContainerStyle}
                     zoom={14}
                     center={{
-                      lat: loadMap.track.start_latlng[1],
-                      lng: loadMap.track.start_latlng[0],
+                      lat: loadMap.start_latlng[1],
+                      lng: loadMap.start_latlng[0],
                     }}
                   >
                     <Marker
                       position={{
-                        lat: loadMap.track.start_latlng[1],
-                        lng: loadMap.track.start_latlng[0],
+                        lat: loadMap.start_latlng[1],
+                        lng: loadMap.start_latlng[0],
                       }}
                     />
 
@@ -276,7 +209,7 @@ function oneRoute() {
                       onMouseOver={mouseOver}
                       onMouseOut={mouseOut}
                       options={options}
-                      path={loadMap.track.gps.coordinates.map((m) => ({
+                      path={loadMap.gps.coordinates.map((m) => ({
                         lat: m[1],
                         lng: m[0],
                       }))}
@@ -292,20 +225,8 @@ function oneRoute() {
                   <HorizontalGridLines />
                   <XAxis />
                   <YAxis />
-                  <LineSeries data={loadMap.track.altitude} onNearestX={qq} />
-                  {/* <Crosshair
-                    values={state.crosshairValue}
-                    className={"test-class-name"}
-                  >
-                    <div
-                      style={{ background: "gray", width: 100, height: 100 }}
-                    >
-                      <h3>dong</h3>
-                      <div style={{ fontSize: 20, marginLeft: 20 }}>
-                        {index && state.crosshairValue[index].y}
-                      </div>
-                    </div>
-                  </Crosshair> */}
+                  <LineSeries data={loadMap.altitude} onNearestX={qq} />
+                  
                 </XYPlot>
               </CardDiv>
             </MouseDiv>
@@ -319,20 +240,86 @@ function oneRoute() {
                 overflow: "auto",
               }}
             >
-              {/* <CardWrapper> */}
+              <CardWrapper>
               <TopCard>
                 <div>
                   <span>순위</span>
-                  <span>이름</span>
                   <span>속도</span>
                   <span>기록</span>
                   <span>날짜</span>
                 </div>
               </TopCard>
 
-              {/* {loadMap.rank === null
-                ? ""
-                : myRank.map((b, index) => (
+                {myMapRank.message==='기록이 존재하지 않습니다.'?<div>순위데이터없음</div>:
+                <Card>
+                  순위:{myMapRank.rank+'위'}<br></br>
+                  속도:{myMapRank.post.average_speed+'km'}<br></br>
+                  기록:{myMapRank.post.time}<br></br>
+                  날짜:{myMapRank.post.created_at}<br></br>
+                </Card>
+                
+                
+                }  
+              </CardWrapper>
+            </div>
+        
+          </RightDiv>
+        </TopDiv>
+      </Container>
+
+      {/* {
+        mapRank.map((m)=>(
+          m.user.name
+        ))
+      } */}
+      {/* <RankDiv>
+        <Card>
+          <Table
+            dataSource={mapRank}
+            pagination={false}
+            // scroll={{ y: 400 }}
+          >
+            <Column title="순위" dataIndex="index" key="rank"
+            render={(a) => <a>{a}</a> }/>
+            <Column
+              title="이름"
+              dataIndex='user'
+              key="userNickname"
+              render={(a) => <a>{a.name}</a>}
+            />
+            <Column
+              title="속도"
+              dataIndex="average_speed"
+              key="speed"
+              render={(v) => <p>{v}km</p>}
+            />
+            <Column
+              title="기록"
+              dataIndex="time"
+              key="record"
+             
+              render={(v) => <p>{v}초</p>}
+            />
+            <Column
+              title="날짜"
+              dataIndex="created_at"
+              key="date"
+              render={(v) => dateFormat(v)}
+              sorter={(a, b) => moment(a.date) - moment(b.date)}
+            />
+            <Column
+              title="mmr"
+              dataIndex="mmr"
+              key="date"
+              render={(v) => <p>{v}점</p>}
+            />
+          </Table>
+        </Card>
+      </RankDiv> */}
+      <RankDiv>
+          <Card>
+          {mapRank.message==='해당 트랙을 달린 유저가 존재하지 않습니다'?<div>순위데이터없음</div>: 
+          mapRank.map((b, index) => (
                     <BottomCard>
                       <div>
                         <span>{index + 1 + "위"}</span>
@@ -356,70 +343,16 @@ function oneRoute() {
                             <span>{b.user.name}</span>
                           </a>
                         </Popover>
-                        <span>36km</span>
-                        <span>{b.totalTime}</span>
-                        <span>{dateFormat(b.createdAt)}</span>
+                        <span>{b.average_speed}km</span>
+                        <span>{b.time}</span>
+                        <span>{dateFormat(b.created_at)}</span>
                       </div>
                     </BottomCard>
-                  ))} */}
-              {/* </CardWrapper> */}
-            </div>
-            {/* <Timeline>
-              <Timeline.Item>Create a page site 2022-03-11</Timeline.Item>
-              <Timeline.Item>
-                Solve initial network problems 2022-03-11
-              </Timeline.Item>
-              <Timeline.Item>Technical testing 2022-03-11</Timeline.Item>
-              <Timeline.Item>
-                Network problems being solved 2022-03-11
-              </Timeline.Item>
-            </Timeline> */}
-          </RightDiv>
-        </TopDiv>
-      </Container>
-      {/* <RankDiv>
-        <Card>
-          <Table
-            dataSource={loadMap.rank}
-            pagination={false}
-            // scroll={{ y: 400 }}
-          >
-            <Column title="순위" dataIndex="rank" key="rank" />
-            <Column
-              title="이름"
-              dataIndex='user'
-              key="userNickname"
-              render={(a) => <a>{a.name}</a>}
-            />
-            <Column
-              title="속도"
-              dataIndex="_id"
-              key="speed"
-              render={(v) => <p>{v}km</p>}
-            />
-            <Column
-              title="기록"
-              dataIndex="totalTime"
-              key="record"
-             
-              render={(v) => <p>{v}m</p>}
-            />
-            <Column
-              title="날짜"
-              dataIndex="createdAt"
-              key="date"
-              render={(v) => dateFormat(v)}
-              sorter={(a, b) => moment(a.date) - moment(b.date)}
-            />
-          </Table>
-        </Card>
-      </RankDiv>
-      <RankDiv>
-          <Card>
+                  ))}
           
           </Card>
 
-      </RankDiv> */}
+      </RankDiv>
      
     </>
   );
@@ -440,11 +373,28 @@ function oneRoute() {
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
     // const { query } = context;
+   
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
     console.log('sqqssssssssss',context.query)
   context.store.dispatch({
     type: LOAD_MAP_REQUEST,
     data: context.params.id,
   });
+
+  context.store.dispatch({
+    type:LOAD_TRACK_RANK_REQUEST,
+    data:context.params.id,
+  })
+
+  context.store.dispatch({
+    type:LOAD_TRACK_MYRANK_REQUEST,
+    data:context.params.id,
+  })
+
   context.store.dispatch(END);
   await context.store.sagaTask.toPromise();
 });

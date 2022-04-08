@@ -7,10 +7,11 @@ import {LOAD_MY_INFO_REQUEST} from '../reducers/user'
 import wrapper from '../store/configureStore';
 import { END } from 'redux-saga';
 import axios from 'axios'
-import { Card, Button, Table, Select } from "antd";
+import { Card, Button, Table, Select,Modal } from "antd";
 import styled from "styled-components";
 const { Column } = Table;
 import moment from "moment";
+import { DELETE_MYPOST_REQUEST } from '../reducers/user';
 const { Option } = Select;
 
 
@@ -46,8 +47,11 @@ function myRecord() {
       }
 
 
+    useEffect(()=>{
+      Modal.destroyAll()
+    },[])
 
-
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [propsId,setPropsId]=useState()
     const dispatch=useDispatch()
     const {me}=useSelector((state)=>state.user)
@@ -56,6 +60,10 @@ function myRecord() {
         setPropsId(data.gps_id)
     }
 
+    // useEffect(()=>{
+    //   window.location.reload
+    // },[me.posts])
+   
     useEffect(()=>{
         if(propsId){
             dispatch({
@@ -71,6 +79,26 @@ function myRecord() {
         
 
     },[propsId])
+
+
+    const recordDelete=(id)=>{
+        dispatch({
+          type:DELETE_MYPOST_REQUEST,
+          data:id
+        })
+    }
+
+    const deleteModal=()=>{
+      setIsModalVisible(true)
+    }
+
+    const cancel=()=>{
+      setIsModalVisible(false)
+
+    }
+
+
+
   return (
     <Container>
       {/* <h1>내 활동기록</h1>
@@ -174,12 +202,14 @@ function myRecord() {
                       삭제
                     </Button>
                   ) : null} */}
-                  <Button type="danger" style={{ translate: "all 0.2" }}>
+                  <Button type="danger" onClick={deleteModal()} style={{ translate: "all 0.2" }}>
                     삭제
                   </Button>
                 </>
               )}
+
             />
+            <Modal title="진짜삭제할거야?" visible={isModalVisible} onOk={()=>recordDelete(record.id)} onCancel={cancel()}></Modal>
           </Table>
         </Card>
       </CardDiv>
@@ -201,6 +231,7 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
      context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST
       });
+    
       context.store.dispatch(END);
       await context.store.sagaTask.toPromise();
   })

@@ -23,29 +23,32 @@ const signin = () => {
 
   const {me} =useSelector((state)=>state.user)
 
-//   useEffect(()=>{
-//     if(me.user !=null){
-//       Router.push(
-//         '/'
-//     )
 
-//     dispatch({
-//      type:LOADS_POSTS_REQUEST
-//  })
+  const loginError=()=>{
+    Modal.warning({
+      title:'로그인실패'
+    })
+  }
 
-//     }
-    
-//   },[me.user])
-
-//logout했을때 아직me가 null이아니라서 다시 /로 router.push된다
+  const loginSuccess=()=>{
+    Modal.success({
+      content:'로그인성공!'
+    })
+  }
 useEffect(()=>{
   if(me!=null){
-    Router.push(
-      '/'
-    )
-    dispatch({
-      type:LOADS_POSTS_REQUEST
-    })
+    if(me.message==='Invalid credentials!'){
+      loginError()
+      return '로그인실패'
+    }
+    loginSuccess()
+    // dispatch({
+    //   type:LOADS_POSTS_REQUEST
+    // })
+    // Router.push(
+    //   '/'
+    // )
+    window.location.href='/'
   }
 },[me])
 

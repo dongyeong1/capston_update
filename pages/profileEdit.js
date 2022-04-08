@@ -61,17 +61,7 @@ const profileEdit = () => {
 
 export default profileEdit;
 
-/*
-    id: 1,
-    name: "김동영",
-    email: "dong@gmail.com",
-    sex: "여성",
-    weight: "30kg",
-    profile: { src: "dark.png" },
-    birth: "2020-02-27",
-    introduce: null,
-    location: "김해",
-*/
+
 
 const Container = styled.div`
   width: 600px;

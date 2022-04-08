@@ -6,9 +6,18 @@ import faker from 'faker';
 export const initialStates={
     searchMap:[],
     createMap:[],
+    mapRank:[],
+    myMapRank:null,
    
     loadMap:null,
     myMap:null,
+
+    Rankloading:false,
+    RankDone:false,
+    RankError:null,
+    myRankloading:false,
+    myRankDone:false,
+    myRankError:null,
  
  
     movingmapLoading:false,
@@ -76,308 +85,13 @@ export const LOAD_MY_LOCATION_REQUEST='LOAD_MY_LOCATION_REQUEST'
 export const LOAD_MY_LOCATION_SUCCESS='LOAD_MY_LOCATION_SUCCESS'
 export const LOAD_MY_LOCATION_FAILURE='LOAD_MY_LOCATION_FAILURE'
 
+export const LOAD_TRACK_RANK_REQUEST='LOAD_TRACK_RANK_REQUEST'
+export const LOAD_TRACK_RANK_SUCCESS='LOAD_TRACK_RANK_SUCCESS'
+export const LOAD_TRACK_RANK_FAILURE='LOAD_TRACK_RANK_FAILURE'
 
-
-
-
-
-function dummyMap(){
-    return(
-        [{
-            id:1,
-            name:'복현동~글로벌캠퍼스',
-            distance:350,
-            userId:shortid.generate(),
-            description:'설명',
-            event:'bike',
-            gps:{
-                type:"LineString",
-                coordinates: [
-                    [
-                        128.59416742212568,
-                        35.8713789931692 
-                    ],
-                    [
-                         128.59179748777026,
-                         35.868929415096176
-                    ],
-                    [
-                        128.59179748777026,
-                        35.871731726174204,
-                    ],
-                    [
-                        128.59486872923083,
-                        35.87337779276796
-                    ],
-                    [
-                        128.59900402285095,
-                        35.87467110681479
-                    ],
-                    [
-                        128.59600533040128,
-                        35.872652743839645
-                    ]
-                   
-                ],
-                id: "62133c5ff58346f2e09756af"
-            
-            },
-            altitude: [
-                { x: 0, y: 8 },
-                { x: 1, y: 5 },
-                { x: 2, y: 4 },
-                { x: 3, y: 9 },
-                { x: 4, y: 34 },
-                { x: 5, y: 7 },
-            ],
-            start_latlng: [
-                128.59416742212568,
-                        35.8713789931692 
-            ],
-            end_latlng: [
-                128.59600533040128,
-                        35.872652743839645
-            ],
-            createdAt: "2022-02-21T07:16:47.648Z",
-            },
-            {
-                id:2,
-                name:'경북대학교',
-                distance:350,
-                userId:shortid.generate(),
-                description:'설명',
-                event:'bike',
-                gps:{
-                    type:"LineString",
-                    coordinates: [
-                        [
-                            128.6107980854627,
-                            35.892532678390346
-                        ],
-                        [
-                            128.6068460393017,
-                            35.88766339206395
-                        ],
-                        [
-                             128.61174492985546,
-                             35.88602911241712
-                        ],
-                        [128.6145031287387,
-                            35.88856389908935
-                        ],
-                        [
-                            128.6123212699206,
-                            35.89099855199497
-                        ],
-                        [
-                            128.6128976099858,
-                            35.89463371630573
-                        ]
-                       
-                    ],
-                    id: "62133c5ff58346f2e09756af"
-                
-                },
-                altitude: [
-                    { x: 0, y: 8 },
-                    { x: 1, y: 5 },
-                    { x: 2, y: 4 },
-                    { x: 3, y: 9 },
-                    { x: 4, y: 34 },
-                    { x: 5, y: 7 },
-                ],
-                start_latlng: [
-                    128.6107980854627,
-                    35.892532678390346
-                ],
-                end_latlng: [
-                    128.6128976099858,
-                    35.89463371630573
-                ],
-                createdAt: "2022-02-21T07:16:47.648Z",
-                },
-            {
-                id:3,
-            name:'두류공원~동성로',
-            distance:350,
-            userId:shortid.generate(),
-            description:'설명',
-            event:'running',
-            gps:{
-                type:"LineString",
-                coordinates: [
-            
-                    [128.61568699047842,
-                        35.89783218289432 
-                    ],
-                    [ 128.61388454612188,
-                        35.89831887973966
-                    ],
-                    [ 128.6200643553443,
-                        35.89567677518036
-                    ],
-                    [128.62714538674498,
-                        35.89696307394185 
-                    ],
-                    [128.62555751909755,
-                        35.892443553570914
-                    ],
-                    [128.62933406917793,
-                        35.89421662693352 
-                    ]
-                   
-                ],
-                id: "62133c5ff58346f2e09756af"
-            
-            },
-            altitude: [
-                { x: 0, y: 8 },
-                { x: 1, y: 5 },
-                { x: 2, y: 4 },
-                { x: 3, y: 9 },
-                { x: 4, y: 34 },
-                { x: 5, y: 7 },
-            ],
-            
-            start_latlng: [
-                128.62933406917793,
-                35.89421662693352 
-            ],
-            end_latlng: [
-                128.61568699047842,
-            35.89783218289432 
-            ],
-            createdAt: "2022-02-21T07:16:47.648Z",
-            
-            }]
-       
-    )
-}
-
-
-function movedummyMap(){
-    return(
-        [{
-            id:1,
-            name:'복현동~글로벌캠퍼스',
-            distance:350,
-            userId:shortid.generate(),
-            description:'설명',
-            event:'bike',
-            gps:{
-                type:"LineString",
-                coordinates: [
-                    [
-                        128.59416742212568,
-                        35.8713789931692 
-                    ],
-                    [
-                         128.59179748777026,
-                         35.868929415096176
-                    ],
-                    [
-                        128.59179748777026,
-                        35.871731726174204,
-                    ],
-                    [
-                        128.59486872923083,
-                        35.87337779276796
-                    ],
-                    [
-                        128.59900402285095,
-                        35.87467110681479
-                    ],
-                    [
-                        128.59600533040128,
-                        35.872652743839645
-                    ]
-                   
-                ],
-                id: "62133c5ff58346f2e09756af"
-            
-            },
-            altitude: [
-                { x: 0, y: 8 },
-                { x: 1, y: 5 },
-                { x: 2, y: 4 },
-                { x: 3, y: 9 },
-                { x: 4, y: 34 },
-                { x: 5, y: 7 },
-            ],
-            start_latlng: [
-                128.59416742212568,
-                        35.8713789931692 
-            ],
-            end_latlng: [
-                128.59600533040128,
-                        35.872652743839645
-            ],
-            createdAt: "2022-02-21T07:16:47.648Z",
-            },
-            {
-                id:2,
-                name:'경북대학교',
-                distance:350,
-                userId:shortid.generate(),
-                description:'설명',
-                event:'bike',
-                gps:{
-                    type:"LineString",
-                    coordinates: [
-                        [
-                            128.6107980854627,
-                            35.892532678390346
-                        ],
-                        [
-                            128.6068460393017,
-                            35.88766339206395
-                        ],
-                        [
-                             128.61174492985546,
-                             35.88602911241712
-                        ],
-                        [128.6145031287387,
-                            35.88856389908935
-                        ],
-                        [
-                            128.6123212699206,
-                            35.89099855199497
-                        ],
-                        [
-                            128.6128976099858,
-                            35.89463371630573
-                        ]
-                       
-                    ],
-                    id: "62133c5ff58346f2e09756af"
-                
-                },
-                altitude: [
-                    { x: 0, y: 8 },
-                    { x: 1, y: 5 },
-                    { x: 2, y: 4 },
-                    { x: 3, y: 9 },
-                    { x: 4, y: 34 },
-                    { x: 5, y: 7 },
-                ],
-                start_latlng: [
-                    128.6107980854627,
-                    35.892532678390346
-                ],
-                end_latlng: [
-                    128.6128976099858,
-                    35.89463371630573
-                ],
-                createdAt: "2022-02-21T07:16:47.648Z",
-                },
-           ]
-       
-    )
-}
-
-
-
-  
+export const LOAD_TRACK_MYRANK_REQUEST='LOAD_TRACK_MYRANK_REQUEST'
+export const LOAD_TRACK_MYRANK_SUCCESS='LOAD_TRACK_MYRANK_SUCCESS'
+export const LOAD_TRACK_MYRANK_FAILURE='LOAD_TRACK_MYRANK_FAILURE'
 
 
 
@@ -385,6 +99,30 @@ function movedummyMap(){
 const reducer=(state=initialStates,action)=>{
     return produce(state,(draft)=>{
         switch(action.type){
+            case LOAD_TRACK_MYRANK_REQUEST:
+                draft.myRankloading=true;
+                draft.myRankDone=false;
+                draft.myRankError=null;
+            case LOAD_TRACK_MYRANK_SUCCESS:
+                draft.myRankloading=false;
+                draft.myRankDone=true;
+                draft.myMapRank=action.data
+            case LOAD_TRACK_MYRANK_FAILURE:
+                draft.myRankloading=false,
+                draft.myRankError='a'   
+            
+                
+            case LOAD_TRACK_RANK_REQUEST:
+                draft.Rankloading=true;
+                draft.RankDone=false;
+                draft.RankError=null;
+            case LOAD_TRACK_RANK_SUCCESS:
+                draft.Rankloading=false;
+                draft.RankDone=true;
+                draft.mapRank=action.data
+            case LOAD_TRACK_RANK_FAILURE:
+                draft.Rankloading=false,
+                draft.RankError='a'   
             case SEARCH_MAP_REQUEST:
                 draft.searchmapLoading = true;
                 draft.searchmapDone = false;
@@ -489,11 +227,11 @@ const reducer=(state=initialStates,action)=>{
             case LOAD_MAP_SUCCESS: 
                 draft.loadmapLoading = false;
                 draft.loadmapDone = true;
-                console.log('maessss',action.data)
+                console.log('qwzxc',action.data)
                 
                      
                 draft.loadMap=action.data
-                 draft.loadMap.track.altitude=draft.loadMap.track.altitude.map((a,index)=>(
+                 draft.loadMap.altitude=draft.loadMap.altitude.map((a,index)=>(
                      {
                         x:index,
                        y:a
@@ -557,8 +295,6 @@ const reducer=(state=initialStates,action)=>{
                 case ADD_MYMAP_SUCCESS: 
                     draft.addmapLoading = false;
                     draft.addmapDone = true;
-                    
-                    
                     break;
                 case ADD_MYMAP_FAILURE:
                     draft.addmapLoading = false;

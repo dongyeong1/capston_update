@@ -18,9 +18,10 @@ import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import Link from "next/link";
 import moment from "moment";
 import axios from 'axios'
-import {LOAD_MY_INFO_REQUEST} from '../reducers/user'
+import {LOAD_MY_INFO_REQUEST, USER_RATE_REQUEST, WEEKRECORD_REQUEST} from '../reducers/user'
 import { END } from 'redux-saga';
 import wrapper from '../store/configureStore';
+import { useSelector } from "react-redux";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -37,6 +38,9 @@ const { Column } = Table;
 // }, [])
 
 const dashboard = () => {
+
+  const {weekRecord,userRate}=useSelector((state)=>(state.user))
+
   const bar = {
     // 바 그래프 더미데이터
     options: {
@@ -51,14 +55,14 @@ const dashboard = () => {
     series: [
       {
         name: "라이딩 km",
-        data: [30, 40, 45, 50, 49, 60, 90],
+        data: [weekRecord.Mon, weekRecord.Tue, weekRecord.Wed, weekRecord.Tur, weekRecord.Fri,weekRecord.Sat,weekRecord.Sun],
       },
     ],
   };
 
   const pie = {
     // 파이 차트 더미데이터
-    series: [55, 20],
+    series: [userRate.R,userRate.B],
     chartOptions: {
       labels: ["러닝", "라이딩"],
       textAnchor: "middle",
@@ -296,6 +300,13 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
    context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST
     });
+    context.store.dispatch({
+      type:WEEKRECORD_REQUEST
+    })
+    context.store.dispatch({
+      type:USER_RATE_REQUEST
+    })
+    
 
 
 

@@ -23,24 +23,48 @@ ADD_TRACK_SUCCESS,
 ADD_TRACK_FAILURE,
 LOAD_MY_LOCATION_REQUEST,
 LOAD_MY_LOCATION_SUCCESS,
-LOAD_MY_LOCATION_FAILURE
+LOAD_MY_LOCATION_FAILURE,
+LOAD_TRACK_RANK_REQUEST,
+LOAD_TRACK_RANK_SUCCESS,
+LOAD_TRACK_RANK_FAILURE,
+LOAD_TRACK_MYRANK_REQUEST,
+LOAD_TRACK_MYRANK_FAILURE,
+LOAD_TRACK_MYRANK_SUCCESS
 } from '../reducers/map'
+import { USER_RATE_FAILURE, USER_RATE_REQUEST, USER_RATE_SUCCESS } from '../reducers/user';
 
 
 
-function searchMapAPI(data){
-    // 13.124.24.179/api/track/search?bounds=128.4642505645752&bounds=35.8402903083385&bounds=128.5250186920166&bounds=128.5250186920166&zoom=16&event=B
-    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
-    // return axios.get(`http://13.124.24.179/api/track/search?bounds=128.4642505645752&bounds=35.8402903083385&bounds=128.5250186920166&bounds=128.5250186920166&zoom=16&event=B`)
+const searchMapAPI =async(datas)=>{
+
+
+    try{
+        const res= await fetch(`https://2yubi.shop/api/tracks/search?bound1=${datas.north.lng}&bound2=${datas.north.lat}&bound3=${datas.south.lng}&bound4=${datas.south.lat}&event=${datas.event}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            
+          });
+          const data= await res.json()
+    
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
+
     }
     
-
 function* searchMap(action){
     try{
         const result = yield call(searchMapAPI,action.data)
+        // console.log('search',result)
         yield put({
             type:SEARCH_MAP_SUCCESS,
-            data:result.data
+            data:result
         })
 
     }catch(err){
@@ -54,18 +78,22 @@ function* searchMap(action){
 }
 
 
-function loadMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/tracks/${data}/ranks`)
+
+
+
+const loadMapAPI=async(datas)=>{
+   const {data}=await axios.get(`https://2yubi.shop/api/tracks?track_id=${datas}`)
+
+    return data
     }
     
 
 function* loadMap(action){
     try{
         const result = yield call(loadMapAPI,action.data)
-        console.log('maedong',result.data)
         yield put({
             type:LOAD_MAP_SUCCESS,
-            data:result.data
+            data:result
         })
 
     }catch(err){
@@ -78,8 +106,22 @@ function* loadMap(action){
     }
 }
 
-function movingMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+const movingMapAPI=async(datas)=>{
+    try{
+        const res= await fetch(`https://2yubi.shop/api/tracks/search?bound1=${datas.north.lng}&bound2=${datas.north.lat}&bound3=${datas.south.lng}&bound4=${datas.south.lat}&event=${datas.event}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            
+          });
+          const data= await res.json()
+          return data
+    }catch(err){
+        console.log(err)
+    }
     }
     
 
@@ -88,7 +130,7 @@ function* movingMap(action){
         const result = yield call(movingMapAPI,action.data)
         yield put({
             type:MOVING_MAP_SUCCESS,
-            data:result.data
+            data:result
         })
 
     }catch(err){
@@ -100,16 +142,34 @@ function* movingMap(action){
     }
 }
 
-function runningMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)    }
-    
 
+
+
+const runningMapAPI=async(datas)=>{
+    try{
+        const res= await fetch(`https://2yubi.shop/api/tracks/search?bound1=${datas.north.lng}&bound2=${datas.north.lat}&bound3=${datas.south.lng}&bound4=${datas.south.lat}&event=${datas.event}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            
+          });
+          const data= await res.json()
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
+}
+    
 function* runningMap(action){
     try{
         const result = yield call(runningMapAPI,action.data)
         yield put({
             type:RUNNING_MAP_SUCCESS,
-            data:result.data
+            data:result
         })
 
     }catch(err){
@@ -122,8 +182,27 @@ function* runningMap(action){
 }
 
 
-function bikeMapAPI(data){
-    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+
+
+
+const bikeMapAPI=async(datas)=>{
+    try{
+        const res= await fetch(`https://2yubi.shop/api/tracks/search?bound1=${datas.north.lng}&bound2=${datas.north.lat}&bound3=${datas.south.lng}&bound4=${datas.south.lat}&event=${datas.event}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            
+          });
+          const data= await res.json()
+      
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
     }
     
 
@@ -132,7 +211,7 @@ function* bikeMap(action){
         const result = yield call(bikeMapAPI,action.data)
         yield put({
             type:BIKE_MAP_SUCCESS,
-            data:result.data
+            data:result
         })
 
     }catch(err){
@@ -145,24 +224,44 @@ function* bikeMap(action){
 }
 
 
-function createmapLoadAPI(data){
-    return axios.get(`http://13.124.24.179/api/gpsdata/${data}`) 
-   }
+
+
+const createmapLoadAPI=async(datas)=>{
+    try{
+        const res= await fetch(`https://2yubi.shop/api/gpsData?gpsId=${datas}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            
+          });
+          const data= await res.json()
+
+          console.log('qzxcrwt',data)
+         
+   
+          return data
+
+    }catch(err){
+        console.log('dongerr',err)
+    }
+    }
 
 
 function* createmapLoad(action){
     try{
         const result = yield call(createmapLoadAPI,action.data)
-        console.log('zxct',result.data)
         yield put({
             type:LOAD_CREATEMAP_SUCCESS,
-            data:result.data
+            data:result.gpsData
         })
 
     }catch(err){
         yield put({
             type:LOAD_CREATEMAP_FAILURE,
-            error:err.response.data,
+            error:'as',
         })
 
     }
@@ -170,11 +269,29 @@ function* createmapLoad(action){
 
 
 
-function addTrackAPI(data){
-    console.log('jong',data)
-    return axios.post(`http://13.124.24.179/api/tracks`,data) 
-   }
 
+
+const addTrackAPI=async(datas)=>{
+    try{
+        const res= await fetch(`https://2yubi.shop/api/tracks`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            body:JSON.stringify({
+                gpsData:datas
+            })
+           
+          });
+          const data= await res.json()
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
+    }
 
 function* addTrack(action){
     try{
@@ -194,18 +311,34 @@ function* addTrack(action){
 }
 
 
-function myLocationAPI(data){
-    return axios.get(`http://13.124.24.179/api/tracks/search?bounds=${data.north.lng}&bounds=${data.north.lat}&bounds=${data.south.lng}&bounds=${data.south.lat}&event=${data.event}`)
+
+
+
+const myLocationAPI=async(datas)=>{
+    try{
+        const res= await fetch(`https://2yubi.shop/api/tracks/search?bound1=${datas.north.lng}&bound2=${datas.north.lat}&bound3=${datas.south.lng}&bound4=${datas.south.lat}&event=${datas.event}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            credentials: "include",
+            
+          });
+          const data= await res.json()
+          return data
+
+    }catch(err){
+        console.log(err)
+    }
 }
    
-
-
 function* myLocation(action){
     try{
         const result = yield call(myLocationAPI,action.data)
         yield put({
             type:LOAD_MY_LOCATION_SUCCESS,
-            data:result.data
+            data:result
         })
 
     }catch(err){
@@ -216,6 +349,83 @@ function* myLocation(action){
 
     }
 }
+
+
+
+
+
+
+const trackRankAPI=async(datas)=>{
+
+    const res=await axios.get(`https://2yubi.shop/api/ranking/track?track_id=${datas}`)
+    const data=await res.data
+    // console.log('',data)
+    return data
+
+    
+   
+}
+
+function* trackRank(action){
+    try{
+        const result = yield call(trackRankAPI,action.data)
+        console.log('newRankqq',result.data)
+        yield put({
+            type:LOAD_TRACK_RANK_SUCCESS,
+            data:result.data
+        })
+
+    }catch(err){
+        yield put({
+            type:LOAD_TRACK_RANK_FAILURE,
+            error:'aa',
+        })
+
+    }
+}
+
+
+
+
+const trackMyRankAPI=async(datas)=>{
+
+    const res=await axios.get(`https://2yubi.shop/api/ranking/myRank?track_id=${datas}`)
+
+    const data=await res.data
+    
+    return data
+
+   
+   
+}
+
+
+
+
+function* trackMyRank(action){
+    try{
+        console.log('action',action.data)
+        const result = yield call(trackMyRankAPI,action.data)
+        console.log('myTrack',result)
+        yield put({
+            type:LOAD_TRACK_MYRANK_SUCCESS,
+            data:result
+        })
+
+    }catch(err){
+        yield put({
+            type:LOAD_TRACK_MYRANK_FAILURE,
+            error:'aa',
+        })
+
+    }
+}
+
+
+
+
+
+
 
 
 
@@ -251,6 +461,17 @@ function* watchMyLocation(){
     yield takeLatest(LOAD_MY_LOCATION_REQUEST,myLocation)
 }
 
+function* watchMapRank(){
+    yield takeLatest(LOAD_TRACK_RANK_REQUEST,trackRank)
+}
+
+function* watchMapMyrank(){
+    yield takeLatest(LOAD_TRACK_MYRANK_REQUEST,trackMyRank)
+}
+
+
+
+
 
 
 
@@ -266,6 +487,8 @@ export default function* rootSaga(){
         fork(watchCreateMapLoad),
         fork(watchAddTrack),
         fork(watchMyLocation),
+        fork(watchMapRank),
+        fork(watchMapMyrank),
         
 
       
