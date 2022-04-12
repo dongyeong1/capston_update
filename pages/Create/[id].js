@@ -31,6 +31,8 @@ function createPath() {
       lat:createMap.gps.coordinates[createMap.gps.coordinates.length-1][1],lng:createMap.gps.coordinates[createMap.gps.coordinates.length-1][0]
     })
 
+    const [slope,setSlope]=useState([createMap.slope])
+
 
     const dispatch=useDispatch()
    
@@ -51,6 +53,7 @@ function createPath() {
               })
             setTwoPolyline([createMap.gps.coordinates.slice(number[0],number[1])])
               setCreateDistance(createMap.distance[number[1]]-createMap.distance[number[0]])
+              setSlope(createMap.slope.slice(number[0],number[1]))
               console.log('two',twoPolyline)
               console.log(number[0])
   
@@ -63,6 +66,8 @@ function createPath() {
             })
             setCreateDistance(createMap.distance[number[1]]-createMap.distance[number[0]])
             setTwoPolyline([createMap.gps.coordinates.slice(number[0],number[1])])
+            setSlope(createMap.slope.slice(number[0],number[1]))
+
             console.log('three',twoPolyline)
             console.log(number[1])
   

@@ -1,4 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback ,useEffect} from "react";
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { Polyline ,Marker,StreetViewPanorama,MarkerClusterer} from '@react-google-maps/api';
+
+
 import {
   Card,
   Button,
@@ -29,6 +33,7 @@ import CommentForm from "./CommentForm";
 // import PostCardContent from './PostCardContent';
 // import PostImages from './PostImages';
 import FollowButton from "./FollowButton";
+import postcss from "postcss";
 
 
 const CardWrapper = styled.div`
@@ -37,13 +42,52 @@ const CardWrapper = styled.div`
 
 
 
+const mapContainerStyle = {
+  height: "200px",
+  width: "400px",
+};
+
+const options = {
+  strokeColor: '#348feb',
+  strokeOpacity: 0.8,
+  strokeWeight: 5,
+  fillColor: '#FF0000',
+  fillOpacity: 0.35,
+  clickable: true,
+  draggable: false,
+  editable: false,
+  visible: true,
+  radius: 30000,
+  paths: [
+        [
+            {lat:  35.969997373905, lng: 128.45170755523503},
+            {lat:35.985501427015464, lng:128.40407191943035},
+            {lat: 35.89580489690752, lng: 128.62238368221892}
+        ]
+  ],
+  zIndex: 1
+};
 
 
 
 
 const PostCard = ({post}) => {
+  // useEffect(()=>{
+  //   setAdditional({
+  //     destination: { lat: "", lng: "" },
+  //     overview: "",
+  //     inProgress: false,
+  //     additional: [],
+  // })
+  // },[])
 
   
+  const [leftPath,setLeftPath]=useState({
+    lat:post.gpsData.gps.coordinates[0][1],lng:post.gpsData.gps.coordinates[0][0]
+  })
+const [rightPath,setRightPath]=useState({
+  lat:post.gpsData.gps.coordinates[post.gpsData.gps.coordinates.length-1][1],lng:post.gpsData.gps.coordinates[post.gpsData.gps.coordinates.length-1][0]
+})
 
 
   
@@ -106,7 +150,37 @@ const PostCard = ({post}) => {
         
         
         
-        <img   width={300} height={300} alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />
+        {/* <img   width={300} height={300} alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" /> */}
+        <LoadScript
+        googleMapsApiKey="AIzaSyAYsO2CGL0YCjMoLk29eyitFC2PIJnJbYE"
+        >
+        
+      <GoogleMap
+        id="marker-example"
+        mapContainerStyle={mapContainerStyle}
+        zoom={16}
+        center={{
+          
+            // lat: createMap.gps.coordinates[createMap.gps.coordinates.length%2][1],
+            // lng: createMap.gps.coordinates[createMap.gps.coordinates.length%2][0],
+            lat:post.gpsData.gps.coordinates[post.gpsData.gps.coordinates.length%2][1],
+            lng: post.gpsData.gps.coordinates[post.gpsData.gps.coordinates.length%2][0],
+
+        }}>
+        
+        <Marker position={leftPath} icon={{url:' http://maps.google.com/mapfiles/ms/icons/blue.png',}} ></Marker>
+        <Marker position={rightPath} ></Marker>
+    
+         <Polyline   options={options} path={post.gpsData.gps.coordinates.map((m)=>(
+            {
+                lat:m[1],
+                lng:m[0]
+            }
+        ))}></Polyline> 
+        
+
+        </GoogleMap>
+        </LoadScript>      
         <div style={{marginTop:10}}>
             <Button style={{borderWidth:0}}>{liked
            ? <HeartTwoTone style={{fontSize:25}} twoToneColor="#eb2f96" key="heart" onClick={onToggleLike} />

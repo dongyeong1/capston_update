@@ -15,7 +15,10 @@ import { DELETE_MYPOST_REQUEST } from '../reducers/user';
 const { Option } = Select;
 
 
+const Calculation=(data)=>{
 
+  return data/1000
+}
 
 function myRecord() {
 
@@ -50,7 +53,7 @@ function myRecord() {
     useEffect(()=>{
       Modal.destroyAll()
     },[])
-
+    const [gpsId,setGpsId]=useState();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [propsId,setPropsId]=useState()
     const dispatch=useDispatch()
@@ -81,25 +84,34 @@ function myRecord() {
     },[propsId])
 
 
-    const recordDelete=(id)=>{
+    const recordDelete=(gpsId)=>{
         dispatch({
           type:DELETE_MYPOST_REQUEST,
-          data:id
+          data:gpsId
         })
     }
 
-    const deleteModal=()=>{
-      setIsModalVisible(true)
+    const deleteModal=(data)=>{
+      // setGpsId(data)
+     var deleteform=confirm('진짜삭제하겠습니까?')
+     if(deleteform){
+       recordDelete(data)
+     }else{
+       console.log('다음에취소')
+     }
+     
+
+      // setIsModalVisible(true)
     }
 
     const cancel=()=>{
       setIsModalVisible(false)
-
     }
 
 
 
   return (
+
     <Container>
       {/* <h1>내 활동기록</h1>
       {me.posts.map((v) => (
@@ -119,11 +131,13 @@ function myRecord() {
           <TopDiv>
             <Card>빈공간</Card>
           </TopDiv>
+
           <Table
             style={{ marginTop: "30px" }}
             dataSource={me.posts}
             pagination={false}
           >
+                    
             <Column
               title="유형"
               dataIndex="event"
@@ -157,7 +171,7 @@ function myRecord() {
               title="거리"
               dataIndex="distance"
               key="distance"
-              render={(v) => <p>{parseFloat(v).toFixed(2)}km</p>}
+              render={(v) => <p>{Calculation(v).toFixed(2)}km</p>}
             />
             <Column
               title="고도"
@@ -202,18 +216,25 @@ function myRecord() {
                       삭제
                     </Button>
                   ) : null} */}
-                  <Button type="danger" onClick={deleteModal()} style={{ translate: "all 0.2" }}>
+                  <Button type="danger" onClick={()=>deleteModal(record.id)} style={{ translate: "all 0.2" }}>
                     삭제
                   </Button>
                 </>
               )}
 
             />
-            <Modal title="진짜삭제할거야?" visible={isModalVisible} onOk={()=>recordDelete(record.id)} onCancel={cancel()}></Modal>
+              
+
           </Table>
+          
         </Card>
       </CardDiv>
+      
+     
     </Container>
+    
+   
+    
   )
 }
 

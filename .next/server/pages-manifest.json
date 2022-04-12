@@ -2,5 +2,6 @@
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
   "/_error": "pages/_error.js",
-  "/Route/[id]": "pages/Route/[id].js"
+  "/": "pages/index.js",
+  "/polylineTest": "pages/polylineTest.js"
 }

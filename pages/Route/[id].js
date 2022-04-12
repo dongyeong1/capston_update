@@ -30,6 +30,11 @@ import {
 } from "react-vis";
 import "react-vis/dist/style.css";
 
+const Calculation=(data)=>{
+
+  return data/1000
+}
+
 
 function oneRoute() {
     const {userId}=useParams()
@@ -58,9 +63,9 @@ function oneRoute() {
     const [myRank,setMyRank]=useState([])
     // const myRank=[]
 
-    useEffect(()=>{
-        console.log('zzzzzzzzzzzzzzzzzzzzz')
-    },[])
+    // useEffect(()=>{
+    //   window.location.reload()
+    // },[])
 
     
 
@@ -164,15 +169,15 @@ function oneRoute() {
         <OverviewDiv>
           <div>
             <div className="title">거리</div>
-            <div className="item">{loadMap.totalDistance}km</div>
+            <div className="item">{Calculation(loadMap.totalDistance).toFixed(2)}km</div>
           </div>
           <div>
             <div className="title">최고 고도</div>
-            <div className="item">{highAltitude}m</div>
+            <div className="item">{parseFloat(highAltitude).toFixed(2) }m</div>
           </div>
           <div>
             <div className="title">최저 고도</div>
-            <div className="item">{lowAltitude}m</div>
+            <div className="item">{parseFloat(lowAltitude).toFixed(2) }m</div>
           </div>
         </OverviewDiv>
         <TopDiv>
@@ -185,14 +190,17 @@ function oneRoute() {
                     mapContainerStyle={mapContainerStyle}
                     zoom={14}
                     center={{
-                      lat: loadMap.start_latlng[1],
-                      lng: loadMap.start_latlng[0],
+                      
+                      lat: loadMap.gps.coordinates[0][1],
+                      lng: loadMap.gps.coordinates[0][0],
                     }}
                   >
                     <Marker
                       position={{
-                        lat: loadMap.start_latlng[1],
-                        lng: loadMap.start_latlng[0],
+                        // lat: loadMap.start_latlng[1],
+                        // lng: loadMap.start_latlng[0],
+                        lat: loadMap.gps.coordinates[0][1],
+                      lng: loadMap.gps.coordinates[0][0],
                       }}
                     />
 
@@ -250,12 +258,12 @@ function oneRoute() {
                 </div>
               </TopCard>
 
-                {myMapRank.message==='기록이 존재하지 않습니다.'?<div>순위데이터없음</div>:
+                {myMapRank[0]==0?<div>순위데이터없음</div>:
                 <Card>
-                  순위:{myMapRank.rank+'위'}<br></br>
-                  속도:{myMapRank.post.average_speed+'km'}<br></br>
-                  기록:{myMapRank.post.time}<br></br>
-                  날짜:{myMapRank.post.created_at}<br></br>
+                  순위:{myMapRank[0].rank+'위'}<br></br>
+                  속도:{myMapRank[0].post.average_speed+'km'}<br></br>
+                  기록:{myMapRank[0].post.time}<br></br>
+                  날짜:{myMapRank[0].post.created_at}<br></br>
                 </Card>
                 
                 
@@ -318,8 +326,8 @@ function oneRoute() {
       </RankDiv> */}
       <RankDiv>
           <Card>
-          {mapRank.message==='해당 트랙을 달린 유저가 존재하지 않습니다'?<div>순위데이터없음</div>: 
-          mapRank.map((b, index) => (
+          {mapRank[0]==0?<div>순위데이터없음</div>: 
+          mapRank[0].map((b, index) => (
                     <BottomCard>
                       <div>
                         <span>{index + 1 + "위"}</span>

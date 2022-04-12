@@ -92,6 +92,7 @@ function selectMap({}) {
 
   useEffect(() => {
     getLocation();
+    console.log('loqwwqwqwqsaxcxc')
     if (mapref) {
       dispatch({
         type: LOAD_MY_LOCATION_REQUEST,
@@ -228,15 +229,20 @@ function selectMap({}) {
   };
 
   const oneRoute = () => {
+    //  dispatch({
+    //   type:LOAD_TRACK_RANK_REQUEST,
+    //   data:propsId,
+    // })
+    // dispatch({
+    //   type:LOAD_TRACK_MYRANK_REQUEST,
+    //   data: propsId,
+    // })
     window.location.href="/Route/"+propsId
     // dispatch({
     //   type: LOAD_MAP_REQUEST,
     //   data: propsId,
     // });
-    // dispatch({
-    //   type:LOAD_TRACK_MYRANK_REQUEST,
-    //   data: propsId,
-    // })
+ 
     // dispatch({
     //   type:LOAD_TRACK_RANK_REQUEST,
     //   data:propsId,
@@ -373,8 +379,10 @@ function selectMap({}) {
                       <Marker
                         key={createKey(p)}
                         position={{
-                          lat: p.start_latlng[1],
-                          lng: p.start_latlng[0],
+                          // lat: p.start_latlng[1],
+                          // lng: p.start_latlng[0],
+                          lat:p.gps.coordinates[0][1],
+                          lng:p.gps.coordinates[0][0],
                         }}
                         clusterer={clusterer}
                         icon={{
@@ -409,7 +417,7 @@ function selectMap({}) {
                     <div style={divStyle}>
                       <h1>동영</h1>
                      
-                      <button onClick={oneRoute}>상세보기</button>
+                      <button ><a href={"Route/"+propsId}>상세보기</a></button>
                     </div>
                   </InfoWindow>
                 )}

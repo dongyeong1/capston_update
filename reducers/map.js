@@ -6,8 +6,8 @@ import faker from 'faker';
 export const initialStates={
     searchMap:[],
     createMap:[],
-    mapRank:[],
-    myMapRank:null,
+    mapRank:[0],
+    myMapRank:[0],
    
     loadMap:null,
     myMap:null,
@@ -106,7 +106,9 @@ const reducer=(state=initialStates,action)=>{
             case LOAD_TRACK_MYRANK_SUCCESS:
                 draft.myRankloading=false;
                 draft.myRankDone=true;
-                draft.myMapRank=action.data
+                draft.myMapRank=[]
+                draft.myMapRank.push(action.data)
+                
             case LOAD_TRACK_MYRANK_FAILURE:
                 draft.myRankloading=false,
                 draft.myRankError='a'   
@@ -119,7 +121,9 @@ const reducer=(state=initialStates,action)=>{
             case LOAD_TRACK_RANK_SUCCESS:
                 draft.Rankloading=false;
                 draft.RankDone=true;
-                draft.mapRank=action.data
+                draft.mapRank=[]
+                draft.mapRank.push(action.data)
+                // draft.mapRank=action.data
             case LOAD_TRACK_RANK_FAILURE:
                 draft.Rankloading=false,
                 draft.RankError='a'   

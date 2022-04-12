@@ -357,8 +357,30 @@ function* myLocation(action){
 
 const trackRankAPI=async(datas)=>{
 
+
+    // try{
+    //     const res= await fetch(`https://2yubi.shop/api/ranking/track?track_id=${datas}`, {
+    //         method: "GET",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Accept: "application/json",
+    //         },
+    //         credentials: "include",
+            
+    //       });
+    //       const data= await res.json()
+       
+       
+    //       return data
+
+    // }catch(err){
+    //     console.log(err)
+    // }
+
+
     const res=await axios.get(`https://2yubi.shop/api/ranking/track?track_id=${datas}`)
-    const data=await res.data
+    const data=await res
+    console.log('qwertyuiop',data)
     // console.log('',data)
     return data
 
@@ -369,11 +391,20 @@ const trackRankAPI=async(datas)=>{
 function* trackRank(action){
     try{
         const result = yield call(trackRankAPI,action.data)
-        console.log('newRankqq',result.data)
+        console.log('osdghjdj',result.data.data)
+    if(result.status==200){
         yield put({
             type:LOAD_TRACK_RANK_SUCCESS,
-            data:result.data
+            data:result.data.data
         })
+    }else if(result.status==204){
+        yield put({
+            type:LOAD_TRACK_RANK_SUCCESS,
+            data:0
+        })
+    }
+
+       
 
     }catch(err){
         yield put({
@@ -389,9 +420,33 @@ function* trackRank(action){
 
 const trackMyRankAPI=async(datas)=>{
 
+
+
+    // try{
+    //     const res= await fetch(`https://2yubi.shop/api/ranking/myRank?track_id=${datas}`, {
+    //         method: "GET",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Accept: "application/json",
+    //         },
+    //         credentials: "include",
+            
+    //       });
+    //       const data= await res.json()
+    //       console.log('myrankkkdnate',data)
+       
+       
+    //       return data
+
+    // }catch(err){
+    //     console.log(err)
+    // }
+
+
     const res=await axios.get(`https://2yubi.shop/api/ranking/myRank?track_id=${datas}`)
 
-    const data=await res.data
+    const data=await res
+    console.log('zxcvbnm',data)
     
     return data
 
@@ -407,10 +462,25 @@ function* trackMyRank(action){
         console.log('action',action.data)
         const result = yield call(trackMyRankAPI,action.data)
         console.log('myTrack',result)
+
+
+        if(result.status==200){
+          
         yield put({
             type:LOAD_TRACK_MYRANK_SUCCESS,
-            data:result
+            data:result.data
         })
+        }else if(result.status==204){
+            yield put({
+                type:LOAD_TRACK_MYRANK_SUCCESS,
+                data:0
+            })
+        }
+
+
+
+
+   
 
     }catch(err){
         yield put({
